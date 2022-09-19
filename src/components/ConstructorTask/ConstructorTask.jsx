@@ -49,6 +49,18 @@ function ConstructorTask() {
         return true;
     }
 
+    function readFile(files) {
+        const file = files[0];
+
+        const reader = new FileReader();
+
+        reader.onload = (e) => {
+            const text = JSON.parse(e.target.result).text;
+            setText(text);
+        }
+        reader.readAsText(file);
+    }
+
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
 
@@ -64,8 +76,8 @@ function ConstructorTask() {
             </label>
 
             <label htmlFor="levelTask">
-                <p>Выберите уровень упражнения:</p>
-                <select id="levelTask" /* подгрузка ограничений по уровню */>
+                <p>Выберите уровень сложности:</p>
+                <select id="levelTask" /* подгрузка ограничений по уровню */  {...register("level")}>
                     <option value="1">1</option>
                     <option value="2">2</option>
                     <option value="3">3</option>
@@ -81,31 +93,45 @@ function ConstructorTask() {
                 </select>
             </label>
 
-            <label htmlFor="addingText">
-                <p>Ввод текста:</p>
-                {
-                    methodAdding === "manually" && 
+            
+            {
+                methodAdding === "manually" && 
+                <label htmlFor="addingText">
+                    <p>Введите текст:</p>
                     <textarea 
                         id="addingText" 
                         onChange={e => setText(e.target.value)}
                         // мин и макс длину указать
                     />
-                }
-                {methodAdding === "file" && <input type="file" id="addingText" />}
-                {methodAdding === "generation" && 
+                </label>
+            }
+            {
+                methodAdding === "file" && 
+                <label htmlFor="addingText">
+                    <input type="file" id="addingText" onChange={(e) => readFile(e.target.files)}/>
+                    <textarea readOnly /*ограничения по уровню*/>
+                        {text}
+                    </textarea>
+                </label>
                 
-                    <label htmlFor="lengthText">
-                        <p>Введите длину текста, который сгенерует система:</p>
-                        <input 
-                            type="number" 
-                            id="lengthText" 
-                            onChange={e => setLengthTextGeneration(e.target.value)}
-                            // мин и макс длину указать
-                        />
-                        <button onClick={e => generateText(e, characterSet)}>Сгенерировать</button>
-                    </label>
-                }
-            </label>
+            }
+            {
+                methodAdding === "generation" && 
+                <label htmlFor="addingText">
+                    <p>Введите длину текста, который сгенерует система:</p>
+                    <input 
+                        type="number" 
+                        id="lengthText" 
+                        onChange={e => setLengthTextGeneration(e.target.value)}
+                        // мин и макс длину указать
+                    />
+                    <button onClick={e => generateText(e, characterSet)}>Сгенерировать</button>
+                    <textarea readOnly /*ограничения по уровню */>
+                        {text}
+                    </textarea>
+                </label>
+            }
+            
 
             <label htmlFor="countError">
                 <p>Сколько ошибок разрешается допустить:</p>
@@ -128,7 +154,7 @@ function ConstructorTask() {
                 />
             </label>
 
-            <input type="submit"/>
+            <input type="submit" value="Создать"/>
         </form>
     );
 }
