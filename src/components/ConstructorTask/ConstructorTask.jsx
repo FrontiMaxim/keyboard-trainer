@@ -8,7 +8,7 @@ const characterSet = ['f', 'd', 's'];
 
 function ConstructorTask() {
 
-   const { register, handleSubmit} = useForm();
+   const {register, handleSubmit} = useForm();
 
    const [methodAdding, setMethodAdding] = useState('manually');
 
@@ -16,7 +16,6 @@ function ConstructorTask() {
    const [text, setText] = useState('');
 
     const onSubmit = data => {
-
 
         if(checkText(characterSet)) {
             data['id'] = Date.now();        
@@ -77,7 +76,7 @@ function ConstructorTask() {
 
             <label htmlFor="levelTask">
                 <p>Выберите уровень сложности:</p>
-                <select id="levelTask" /* подгрузка ограничений по уровню */  {...register("level")}>
+                <select id="levelTask" {...register("level")}>
                     <option value="1">1</option>
                     <option value="2">2</option>
                     <option value="3">3</option>
@@ -140,17 +139,6 @@ function ConstructorTask() {
                     id="countError" 
                     // мин и макс количество ошибок
                     {...register("countError")}
-                />
-            </label>
-
-            <label htmlFor="timePressing">
-                <p>Время нажатия клавиши:</p>
-                <input 
-                    type="number"
-                    step="0.1"
-                    id="timePressing" 
-                    // мин и макс количество ошибок
-                    {...register("timePressing")}
                 />
             </label>
 
