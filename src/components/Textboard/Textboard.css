@@ -1,0 +1,7 @@
+.textboard {
+    height: 40px;
+    width: 1010px;
+    border: 1px solid #e8e8e8;
+    box-shadow: 0 0 1px #000;
+    outline: none;
+}

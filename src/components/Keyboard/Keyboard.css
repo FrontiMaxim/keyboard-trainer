@@ -1,0 +1,45 @@
+.keyboard {
+    display: flex;
+    width: 1015px;
+    flex-wrap: wrap;
+    background-color: #e8e8e8;
+    justify-content: space-between;
+    margin-top: 5vh;
+}
+
+.keyboard_key {
+    width: 60px;
+    height: 60px;
+    margin: 4px;
+    background-color: #fff;
+    border: none;
+    box-shadow: 0 0 1px #000;
+}
+
+[id="8"], [id="13"] {
+    width: 120px;
+}
+
+[id="92"] {
+    width: 90px;
+}
+
+[id="9"] {
+    width: 90px;
+}
+
+[id="20"] {
+    width: 128px;
+}
+
+[id="16"] {
+    width: 156px;
+}
+
+[id="32"] {
+    width: 590px;
+}
+
+.key_active {
+    background-color:aqua;
+}
