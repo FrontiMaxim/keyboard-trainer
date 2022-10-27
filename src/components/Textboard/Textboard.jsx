@@ -20,8 +20,8 @@ function Textboard() {
   }
 
   function onKeyDownHandler(event) {
-    const letter = document.querySelector('.pressed');
-    letter.classList.remove('pressed');
+    const letters = document.querySelectorAll('.pressed');
+    letters.forEach(item => item.classList.remove('pressed'));
   }
 
   return (
