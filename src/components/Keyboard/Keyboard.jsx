@@ -8,14 +8,14 @@ function Keyboard() {
   return (
     <div className="keyboard">
         {
-            keys.map(({code, value}, index) => 
-            <button 
-            key={`${index}${code}`} 
-            id={code} 
+            keys.map(({letter, value}, index) => 
+            <div
+            key={`${index}${letter}`} 
+            data-letter={letter}
             className="keyboard_key"
             >
               {value}
-            </button>)
+            </div>)
         }
     </div>
   )

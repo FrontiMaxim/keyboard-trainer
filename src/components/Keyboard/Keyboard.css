@@ -14,32 +14,31 @@
     background-color: #fff;
     border: none;
     box-shadow: 0 0 1px #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-[id="8"], [id="13"] {
+[data-letter="Backspace"], [data-letter="Enter"] {
     width: 120px;
 }
 
-[id="92"] {
+[data-letter="Tab"] {
     width: 90px;
 }
 
-[id="9"] {
-    width: 90px;
-}
-
-[id="20"] {
+[data-letter="CapsLock"] {
     width: 128px;
 }
 
-[id="16"] {
+[data-letter="Shift"] {
     width: 156px;
 }
 
-[id="32"] {
+[data-letter=" "] {
     width: 590px;
 }
 
-.key_active {
-    background-color:aqua;
+.pressed {
+    background-color: orangered;
 }
