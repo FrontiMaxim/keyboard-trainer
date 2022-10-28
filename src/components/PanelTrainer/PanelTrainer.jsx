@@ -7,7 +7,7 @@ function PanelTrainer({length = 0, recruited = 0, error = 0, time = '00:00'}) {
 
         <div className='panel_trainer_length'>
             <span>Упражнение: </span> 
-            {length} / {recruited}
+            {recruited} / {length}
         </div>
 
         <div className='panel_trainer_error'>

@@ -1,8 +1,18 @@
 .textboard {
-    height: 40px;
-    width: 1010px;
+    padding: 3px;
+    width: 1015px;
     border: 1px solid #e8e8e8;
     box-shadow: 0 0 1px #000;
     outline: none;
+    font-size: 100%;
 }
 
+.textboard::selection {
+    background: orangered; /* Цвет фона */
+    color: #fff; /* Цвет текста */
+}
+
+.rigthPart {
+    background: orangered;
+    color: #fff;
+}

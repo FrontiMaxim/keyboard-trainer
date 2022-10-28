@@ -40,5 +40,9 @@
 }
 
 .pressed {
-    background-color: orangered;
+    background-color: green;
+}
+
+.error {
+    background-color: red;
 }
