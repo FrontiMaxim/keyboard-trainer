@@ -9,6 +9,18 @@ import './Trainer.css';
 
 
 function Trainer() {
+
+
+  // объект для формирования результата
+  let resultExercises = {
+    idUser: undefined,
+    idExercises: undefined,
+    speed: 0.0,
+    countError: 0,
+    date: '00.00.0000',
+    time: '00:00'
+  };
+
   const text = 'Говори со мной, держи глаза открытыми - брат, не засыпай.';
 
   const v = 0.5; // скорость набора
@@ -26,6 +38,8 @@ function Trainer() {
   const [isPlay, setIsPlay] = useState(false);
   const [idInterval, setIdInterval] = useState(0);
 
+  const [showKeyboard, setShowKeyboard] = useState(true);
+
   const [timer, setTimer] = useState({
     m: Math.trunc(time / 60),
     s: Math.round(time - Math.trunc(time / 60) * 60)
@@ -34,8 +48,12 @@ function Trainer() {
   let minutes = Math.trunc(time / 60);
   let seconds = Math.round(time - minutes * 60);
 
+  const m = minutes;
+  const s = seconds;
+
   let pressTimeStart = 0;
   let pressTimeEnd = 0;
+  
   let pressTimes = [];
 
   function calculatePressingTime(start, end) {
@@ -46,8 +64,7 @@ function Trainer() {
   function countdown() {
     if(seconds === 0) {
       if(minutes === 0) {
-        setIsPlay(false);
-        clearInterval(idInterval);
+        completeExercises();
       } else {
         seconds = 59;
         minutes -= 1;
@@ -64,12 +81,38 @@ function Trainer() {
   useEffect(() => {
     setLetters(Array.from(document.querySelectorAll('[data-letter]')));
     ref.current.focus();
-
-    setIdInterval(setInterval(() => {
-      isPlay && countdown();
-    }, 1000));
-  }, [isPlay]);
+  }, []);
  
+  function completeExercises() {
+    setIsPlay(false);
+    clearInterval(idInterval);
+
+    let sumPress = pressTimes.reduce((sum, time) => {
+      return sum + time;
+    }, 0);
+
+    const averageTimePress = sumPress / pressTimes.length;
+
+    resultExercises.speed = averageTimePress;
+    resultExercises.countError = errorLetter;
+    resultExercises.time = `${m - timer.m}:${s -timer.s}`;
+
+    const date = new Date();
+    resultExercises.date = date.toLocaleDateString();
+
+
+    console.log(resultExercises);
+  }
+
+  useEffect(() => {
+    if(isPlay) {
+      setIdInterval(setInterval(() => {
+        countdown();
+      }, 1000));
+    }
+  }, [isPlay])
+
+
   function onKeyUpHandler() {
 
     pressTimeStart = new Date().getTime();
@@ -106,8 +149,7 @@ function Trainer() {
           setCurrentLetter(currentLetter + 1);
 
           if(currentLetter === (text.length - 1)) {
-            setIsPlay(false);
-            clearInterval(idInterval);
+            completeExercises();
           }
 
           setRigthPart(rigthPart + remainPart.slice(0,1));
@@ -123,6 +165,10 @@ function Trainer() {
     }
   }
 
+  function onChangeHandler() {
+    setShowKeyboard(!showKeyboard);
+  }
+
 
   return (
     <div ref={ref} className='trainer' tabIndex={0} onKeyUp={onKeyUpHandler} onKeyDown={onKeyDownHandler}>
@@ -135,7 +181,11 @@ function Trainer() {
            seconds={timer.s} 
           />
         <Textboard rigthPart={rigthPart} remainPart={remainPart} />
-        <Keyboard />
+        <input type="checkbox" className='trainer_checkbox' onChange={onChangeHandler}/>
+
+        {
+          showKeyboard && <Keyboard />
+        }
     </div>
   )
 }

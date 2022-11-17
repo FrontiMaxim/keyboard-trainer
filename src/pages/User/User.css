@@ -1,0 +1,86 @@
+.User {
+    overflow: hidden;
+}
+
+.User_head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 60px;
+    width: 100wv;
+    height: 100px;
+    background-color: grey;
+}
+
+
+.User_head_btn-info:hover {
+    cursor: pointer;
+    background-color: orangered;
+}
+
+.User_main {
+    display: flex;
+}
+
+.User_main_exercises {
+    width: 40vw;
+    padding-left: 60px;
+    padding-top: 40px;
+}
+
+select {
+    margin-left: 3px;
+}
+
+.User_main_exercises_list {
+    margin-top: 30px;
+}
+
+.User_main_exercises_list ul {
+    padding-left: 10px;
+    width: 60%;
+    height: 55vh;
+    overflow: scroll;
+    overflow-x: hidden;
+    border: 1px solid #000;
+    list-style: none;
+}
+
+.User_main_exercises_list li {
+    display: flex;
+    align-items: center;
+    padding-left: 5px;
+    width: 90%;
+    height: 40px;
+    background-color: grey;
+    margin: 10px 0;
+}
+
+.User_main_statistics {
+    width: 60vw;
+}
+
+.User_main_statistics {
+    padding-top: 40px;
+}
+
+.User_main_statistics_table {
+    margin-top: 30px;
+    margin-bottom: 50px;
+    border-collapse: collapse;
+}
+
+.User_main_statistics_table th, .User_main_statistics_table td {
+    padding: 2px 4px;
+    border: 1px solid #000;
+}
+
+.User_main_statistics_table td:hover {
+    cursor: pointer;
+    background-color: orangered;
+}
+
+.User_main_exercises_list li:hover {
+    cursor: pointer;
+    background-color: orangered;
+}
