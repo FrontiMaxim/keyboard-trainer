@@ -1,3 +1,21 @@
 .information ul {
     list-style: none;
 }
+
+.information {
+    background-color: white;
+    padding: 10px;
+    border-radius: 20px;
+}
+
+.btn-close-modalWindow {
+    display: block;
+    margin: 0 auto;
+    width: 150px;
+    height: 30px;
+}
+
+.btn-close-modalWindow:hover {
+    cursor: pointer;
+    background-color: orangered;
+}

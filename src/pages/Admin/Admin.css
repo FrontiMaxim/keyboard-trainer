@@ -2,7 +2,7 @@
     overflow: hidden;
 }
 
-.User_head {
+.admin_head {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -13,30 +13,26 @@
 }
 
 
-.User_head_btn-info:hover {
+.admin_head_btn-info:hover {
     cursor: pointer;
     background-color: orangered;
 }
 
-.User_main {
+.admin_main {
     display: flex;
 }
 
-.User_main_exercises {
-    width: 35vw;
+.admin_main_exercises {
+    width: 50vw;
     padding-left: 60px;
-    padding-top: 40px;
+    padding-top: 10px;
 }
 
-select {
-    margin-left: 3px;
-}
-
-.User_main_exercises_list {
+.admin_main_list {
     margin-top: 30px;
 }
 
-.User_main_exercises_list ul {
+.admin_main_list ul {
     padding-left: 10px;
     width: 60%;
     height: 55vh;
@@ -46,42 +42,51 @@ select {
     list-style: none;
 }
 
-.User_main_exercises_list li {
+.admin_main_list li {
     display: flex;
     align-items: center;
-    padding-left: 5px;
     width: 90%;
     height: 40px;
     background-color: grey;
     margin: 10px 0;
 }
 
-.User_main_statistics {
-    width: 65vw;
+.admin_main_exercises li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 10px;
 }
 
-.User_main_statistics {
-    padding-top: 40px;
+.btn-redact-exercises {
+    margin-right: 5px;
 }
 
-.User_main_statistics_table {
+.admin_main_table {
     margin-top: 30px;
     margin-bottom: 50px;
     border-collapse: collapse;
 }
 
-.User_main_statistics_table th, .User_main_statistics_table td {
+.admin_main_table th, .admin_main_table td {
     text-align: center;
     padding: 2px 4px;
     border: 1px solid #000;
 }
 
-.User_main_statistics_table td:hover {
+
+.admin_main_users {
+    width: 50vw;
+    padding-top: 10px;
+}
+
+.admin_main_users li {
+    padding-left: 20px;
+}
+
+.admin_main_exercises button:hover, .admin_main_users li:hover {
     cursor: pointer;
     background-color: orangered;
 }
 
-.User_main_exercises_list li:hover {
-    cursor: pointer;
-    background-color: orangered;
-}
+

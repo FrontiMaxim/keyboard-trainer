@@ -11,7 +11,6 @@ import {
     Tooltip,
   } from 'chart.js';
 import { useState } from 'react';
-import ModalWindow from '../../components/ModalWindow/ModalWindow';
 import Information from '../../components/ModalWindow/Information/Information';
 
 ChartJS.register(
@@ -119,9 +118,7 @@ function User() {
 
         {
             isOpenModalWindow && 
-            <ModalWindow closeModalWindow={closeModalWindow}>
-                <Information />
-            </ModalWindow>
+            <Information closeModalWindow={closeModalWindow} />
         }
     
         <div className='User_head'>
@@ -163,7 +160,7 @@ function User() {
                 <table className='User_main_statistics_table'>
                     <thead>
                         <th>Средняя скорость набора[символ/сек]</th>
-                        <th>Средннее количество ошибок на упражнение</th>
+                        <th>Среднее количество ошибок на упражнение</th>
                         <th>Количество тренировок</th>
                     </thead>
                     <tbody>
