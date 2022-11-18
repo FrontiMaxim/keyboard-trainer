@@ -29,7 +29,7 @@ function User() {
         labels: ['14.02.2022', '15.02.2022', '16.02.2022', '17.02.2022'],
         datasets: [
             {
-              data: [0.3, 0.5, 0.35, 0.4],
+              data: [3, 5, 2, 4],
               lineTension: 0.5,
               borderColor: 'grey',
             }
@@ -74,10 +74,10 @@ function User() {
     }
 
     const dataCountTrain = {
-        labels: ['14.02.2022', '15.02.2022', '16.02.2022', '17.02.2022'],
+        labels: ['14.02.2022', '15.02.2022', '16.02.2022', '17.02.2022', '18.02.2022'],
         datasets: [
             {
-              data: [1, 1, 2, 0],
+              data: [1, 1, 2, 1, 3],
               lineTension: 0.5,
               backgroundColor: 'grey'
             }
@@ -162,13 +162,13 @@ function User() {
                 Общая статистика пользователя
                 <table className='User_main_statistics_table'>
                     <thead>
-                        <th>Средняя скорость набора[сек/сим]</th>
+                        <th>Средняя скорость набора[символ/сек]</th>
                         <th>Средннее количество ошибок на упражнение</th>
                         <th>Количество тренировок</th>
                     </thead>
                     <tbody>
                         <tr onClick={changeData}>
-                            <td className='column-speed'>0.43</td>
+                            <td className='column-speed'>2</td>
                             <td className='column-error'>5</td>
                             <td className='column-count-train'>10</td>
                         </tr>

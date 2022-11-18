@@ -5,6 +5,7 @@
     background-color: #e8e8e8;
     justify-content: space-between;
     margin-top: 5vh;
+    transform: scale(0.9);
 }
 
 .keyboard_key {
