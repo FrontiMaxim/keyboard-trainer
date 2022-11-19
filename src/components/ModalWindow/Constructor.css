@@ -1,0 +1,28 @@
+.constructor {
+    background-color: white;
+    padding: 10px;
+    border-radius: 20px;
+}
+
+.constructor h3 {
+    text-align: center;
+}
+
+.constructor input {
+    display: block;
+}
+
+.constructor button:hover {
+    cursor: pointer;
+    background-color: orangered;
+}
+
+.constructor_list-btn {
+    display: flex;
+    justify-content: space-around;
+    margin: 30px 0 20px 0;
+}
+
+.constructor_list-btn button {
+    width: 45%;
+}

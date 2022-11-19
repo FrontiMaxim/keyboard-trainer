@@ -2,13 +2,21 @@ import React from 'react'
 import { useState } from 'react';
 import Information from '../../components/ModalWindow/Information/Information';
 import ConstructorTask from '../../components/ModalWindow/ConstructorTask/ConstructorTask';
+import ConstructorLevel from '../../components/ModalWindow/ConstructorLevel/ConstructorLevel';
 import './Admin.css';
+import { useEffect } from 'react';
 
 function Admin() {
 
     const login = 'Максим Расторгуев';
+
     const [isOpenModalWindow, setIsOpenModalWindow] = useState(false);
     const [typeModalWindow, setTypeModalWindow] = useState('info');
+
+    const [exercises, setExercises] = useState([]);
+    const [users, setUsers] = useState([]);
+    const [statisticExercise, setstatisticExercise] = useState({});
+    const [statisticUser, setstatisticUser] = useState({});
 
     const listExercises = [
         {id: 0, name: 'Название_1'},
@@ -50,21 +58,47 @@ function Admin() {
         setIsOpenModalWindow(false);
     }
 
+
+    // реализовать удаление упражнение
+    function deleteExercises() {
+
+    }
+
+    // загрузка упражнений и пользователей
+    useEffect(() => {
+
+    }, []);
+
     return (
-        <div>
+        <div className='admin'>
             {
                 isOpenModalWindow && typeModalWindow === 'info' &&
                 <Information closeModalWindow={closeModalWindow} />
             }
 
             {
-                 isOpenModalWindow && typeModalWindow === 'redact' &&
-                 <ConstructorTask closeModalWindow={closeModalWindow} nameBtn={'Сохранить'}/>
+                isOpenModalWindow && (typeModalWindow === 'redact' || typeModalWindow === 'create') &&
+                <ConstructorTask 
+                    closeModalWindow={closeModalWindow} 
+                    nameForm={typeModalWindow === 'redact' ? 'Редактивание упражнения' : 'Создание упражнения'} 
+                    nameBtn={typeModalWindow === 'redact' ? 'Сохранить' : 'Создать'}
+                />
+            }
+
+            {   
+                isOpenModalWindow && typeModalWindow === 'change' &&
+                <ConstructorLevel closeModalWindow={closeModalWindow}/>
             }
         
             <div className='admin_head'>
                 <div className='admin_head_login'>
                     {login}
+                    <button className='admin_head_btn-change' onClick={openModalWindow} data-type="change"> 
+                         Настроить уровень
+                    </button>
+                    <button className='admin_head_btn-create' onClick={openModalWindow} data-type="create"> 
+                         Создать упражнение
+                    </button>
                 </div>
                 <button className='admin_head_btn-info' onClick={openModalWindow} data-type="info"> 
                     Справочная информация
@@ -89,7 +123,12 @@ function Admin() {
                                             >   
                                                 Редактировать
                                             </button>
-                                            <button className='btn-delete-exercises'>Удалить</button>
+                                            <button 
+                                                className='btn-delete-exercises'
+                                                onClick={deleteExercises}
+                                            >
+                                                Удалить
+                                            </button>
                                          </div>
                                     </li>
                                 })

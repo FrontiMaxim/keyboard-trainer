@@ -3,11 +3,12 @@ import { useForm } from "react-hook-form";
 
 import {restrictions} from './restrictions';
 import './ConstructorTask.css';
+import '../Constructor.css';
 
 const {minLengthNameText, maxLenghtNameText} = restrictions;
 const characterSet = ['f', 'd', 's'];
 
-function ConstructorTask({closeModalWindow, nameBtn}) {
+function ConstructorTask({closeModalWindow, nameForm, nameBtn}) {
 
    const {register, handleSubmit} = useForm();
 
@@ -16,15 +17,16 @@ function ConstructorTask({closeModalWindow, nameBtn}) {
    const [lengthTextGeneration, setLengthTextGeneration] = useState(0);
    const [text, setText] = useState('');
 
-    const onSubmit = data => {
-
-        if(checkText(characterSet)) {
-            data['id'] = Date.now();        
+    const onSubmit = (data) => {
+       
+        if(checkText(characterSet)) {      
             data['text'] = text;
             console.log(data);
         } else {
             alert('Текст упражнения не прошёл проверку на соответствие! Перепроверьте его!');
         }
+
+        closeModalWindow();
     } 
 
     // автоматическая генерация текста
@@ -56,13 +58,15 @@ function ConstructorTask({closeModalWindow, nameBtn}) {
             const text = JSON.parse(e.target.result).text;
             setText(text);
         }
+        
         reader.readAsText(file);
     }
 
+    
     return (
         <div className='modalWindow'>
-            <form className='constructor-task' onSubmit={handleSubmit(onSubmit)}>
-
+            <form className='constructor' onSubmit={handleSubmit(onSubmit)}>
+                <h3>{nameForm}</h3>
                 <label htmlFor="nameTask">
                     <p>Введите название упражнения:</p>
                     <input 
@@ -108,9 +112,7 @@ function ConstructorTask({closeModalWindow, nameBtn}) {
                     methodAdding === "file" && 
                     <label htmlFor="addingText">
                         <input type="file" id="addingText" onChange={readFile}/>
-                        <textarea  /*ограничения по уровню*/>
-                            {text}
-                        </textarea>
+                        <textarea readonly value={text} /*ограничения по уровню*/ />
                     </label>
                     
                 }
@@ -124,10 +126,8 @@ function ConstructorTask({closeModalWindow, nameBtn}) {
                             onChange={e => setLengthTextGeneration(e.target.value)}
                             // мин и макс длину указать
                         />
-                        <input className="btn-generate" type="button" onClick={e => generateText(e, characterSet)} value="Сгенерировать" />
-                        <textarea  /*ограничения по уровню */>
-                            {text}
-                        </textarea>
+                        <button type="button" className="btn-generate" onClick={e => generateText(e, characterSet)}>Сгенерировать</button>
+                        <textarea readonly value={text}/*ограничения по уровню */ />
                     </label>
                 }
 
@@ -142,7 +142,11 @@ function ConstructorTask({closeModalWindow, nameBtn}) {
                     />
                 </label>
 
-                <input type="submit" value={nameBtn} onClick={closeModalWindow}/>
+                <div className='constructor_list-btn'>
+                    <button type="submit">{nameBtn}</button>
+                    <button type="button" className='btn-cancel' onClick={closeModalWindow}>Отмена</button>
+                </div>
+                
             </form>
         </div>
     );
