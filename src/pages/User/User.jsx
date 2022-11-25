@@ -12,6 +12,8 @@ import {
   } from 'chart.js';
 import { useState } from 'react';
 import Information from '../../components/ModalWindow/Information/Information';
+import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 ChartJS.register(
     CategoryScale,
@@ -35,13 +37,15 @@ function User() {
         ]
     }
 
+    
+    const login = useSelector((state) => state.user.login);
+
     const [dataChart, setData] = useState(dataSpeed);
     const [showLine, setShowLine] = useState(true);
     const [showBar, setShowBar] = useState(false);
     const [isOpenModalWindow, setIsOpenModalWindow] = useState(false);
 
- 
-    const login = 'Максим Расторгуев';
+    const navigate = useNavigate();
 
     const listExercises = [
         {id: 0, name: 'Название_1'},
@@ -112,6 +116,10 @@ function User() {
     function closeModalWindow() {
         setIsOpenModalWindow(false);
     }
+
+    function goToExercise(e) {
+        navigate('/trainer');
+    }
     
     return (
     <div className='User'>
@@ -143,7 +151,7 @@ function User() {
 
                 <div className='User_main_exercises_list'>
                     Список упражнений
-                    <ul>
+                    <ul onClick={goToExercise}>
                         {
                             listExercises.map(({id, name}) => {
                                 return <li key={id}>{name}</li>

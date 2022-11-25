@@ -4,14 +4,27 @@ import { useForm } from "react-hook-form";
 
 import {restrictions} from "./restrictions";
 import './PanelInput.css';
+import { useNavigate } from "react-router-dom";
 
 const {minLengthLogin, maxLengthLogin, minLengthPassword, maxLengthPassword} = restrictions;
 
 function PanelInput() {
 
   const {register, handleSubmit} = useForm();
+  
+  const navigate = useNavigate();
 
-  const onSubmit = data => console.log(data);
+  const onSubmit = (data) => {
+    console.log(data);
+
+    const role = 1;
+
+    if(role === 0) {
+      navigate('/admin');
+    } else if (role === 1) {
+      navigate('/user');
+    }
+  }
 
   const [isRegistration, setIsRegistration] = useState(false);
   const [isError, setIsError] = useState(false);

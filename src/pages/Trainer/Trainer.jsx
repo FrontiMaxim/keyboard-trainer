@@ -1,5 +1,6 @@
 import React from 'react';
 import { useState, useRef,  useEffect } from 'react';
+import { useSelector } from 'react-redux';
 
 import PanelTrainer from '../../components/PanelTrainer/PanelTrainer';
 import Textboard from '../../components/Textboard/Textboard';
@@ -12,22 +13,16 @@ function Trainer() {
 
   const specialSymbols = ['Shift', 'Control', 'Meta', 'Alt'];
 
-  // объект упражнения
-  const [exercises, setExercises] = useState({
-    id: 0,
-    text: '',
-    allowedCountError: 0,
-    time: 0
-  });
+  const exercise = useSelector((state) => state.exercise);
       
   // объект результата
   const [resultTrain, setResultTrain] = useState({});
 
   const [rigthPart, setRigthPart] = useState('');
-  const [remainPart, setRemainPart] = useState('');
+  const [remainPart, setRemainPart] = useState(exercise.text);
 
   const [currentLetter, setCurrentLetter] = useState(0);
-  const [countLetter, setCountLetter] = useState(0);
+  const [countError, setCountError] = useState(0);
 
   const [letters, setLetters] = useState([]);
 
@@ -42,38 +37,16 @@ function Trainer() {
 
   const [attempts, setAttempts] = useState(1);
 
-  const [minutes, setMinutes] = useState(0);
-  const [seconds, setSeconds] = useState(0);
+  const [minutes, setMinutes] = useState(Math.trunc(exercise.time / 60));
+  const [seconds, setSeconds] = useState(Math.round(exercise.time - Math.trunc(exercise.time / 60) * 60));
 
 
   const ref = useRef(null);
 
-  // получение упражнения с сервера
   useEffect(() => {
-
-    setExercises({
-      id: 1,
-      text: 'Говори со мной, держи глаза открытыми - брат, не засыпай.',
-      allowedNumberErrors: 3,
-      time: 29 // время должно прийти в секундах (выделять минуты и секунды на клиенте)
-    });
-
     setLetters(Array.from(document.querySelectorAll('[data-letter]')));
     ref.current.focus();
   }, []);
-
-
-  // слежка за объектом упражнения и настройка времени
-  useEffect(() => {
-    let time = exercises.time;
-     
-    if(time !== 0) {
-      setMinutes(Math.trunc(time / 60));
-      setSeconds(Math.round(time - Math.trunc(time / 60) * 60));
-
-      setRemainPart(exercises.text);
-    }
-  }, [exercises]);
 
 
   // слежка за игрой
@@ -90,25 +63,24 @@ function Trainer() {
 
   // проверка на ввод последнего символа текста для окончания тренировки
   useEffect(() => {
-    if(exercises.text.length !== 0) {
-      if(currentLetter === (exercises.text.length)) {
-        completeExercises();
-      }
+    
+    if(currentLetter === (exercise.text.length)) {
+      completeExercises();
     }
+    
   }, [currentLetter]);
 
 
   useEffect(() => {
-    if (exercises.time !== 0) {
-      if(seconds === 0) {
-        if(minutes === 0) {
-          completeExercises();
-        } else {
-          setSeconds(59);
-          setMinutes(prev => prev - 1);
-        }
-      } 
-    }
+    if(seconds === 0) {
+      if(minutes === 0) {
+        console.log("!")
+        completeExercises();
+      } else {
+        setSeconds(59);
+        setMinutes(prev => prev - 1);
+      }
+    } 
   }, [seconds]);
 
 
@@ -121,7 +93,7 @@ function Trainer() {
         idUser: undefined,
         idExercises: undefined,
         speed: Math.floor((currentLetter + 1) / delta),
-        countError: countLetter,
+        countError: countError,
         date: new Date().toLocaleDateString(),
         time: `${Math.trunc(delta / 60)}:${Math.round(delta - Math.trunc(delta / 60) * 60)}`
       }
@@ -176,7 +148,7 @@ function Trainer() {
       } else if (event.key === 'CapsLock') {
         ref.current.focus();
       } else if (isPlay) {
-        if(exercises.text[currentLetter] === event.key) {
+        if(exercise.text[currentLetter] === event.key) {
 
           letter.classList.add('pressed');
     
@@ -186,7 +158,7 @@ function Trainer() {
     
         } else if (!specialSymbols.includes(event.key)) {
           
-          setCountLetter(countLetter + 1);
+          setCountError(countError + 1);
     
           letter.classList.add('error');
         }
@@ -203,10 +175,10 @@ function Trainer() {
   return (
     <div ref={ref} className='trainer' tabIndex={0} onKeyUp={onKeyUpHandler} onKeyDown={onKeyDownHandler}>
         <PanelTrainer
-           length={exercises.text.length} 
+           length={exercise.text.length} 
            recruited={currentLetter} 
-           errorLetter={countLetter} 
-           allowedNumberErrors={exercises.allowedNumberErrors}
+           errorLetter={countError} 
+           allowedNumberErrors={exercise.allowedCountError}
            minutes={minutes} 
            seconds={seconds} 
           />
