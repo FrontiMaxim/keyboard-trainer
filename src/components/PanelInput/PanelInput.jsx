@@ -17,7 +17,7 @@ function PanelInput() {
   const onSubmit = (data) => {
     console.log(data);
 
-    const role = 1;
+    const role = 0;
 
     if(role === 0) {
       navigate('/admin');

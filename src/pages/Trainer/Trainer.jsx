@@ -7,6 +7,8 @@ import Textboard from '../../components/Textboard/Textboard';
 import Keyboard from '../../components/Keyboard/Keyboard';
 
 import './Trainer.css';
+import Alert from '../../components/Alert/Alert';
+import { useNavigate } from 'react-router-dom';
 
 
 function Trainer() {
@@ -14,6 +16,7 @@ function Trainer() {
   const specialSymbols = ['Shift', 'Control', 'Meta', 'Alt'];
 
   const exercise = useSelector((state) => state.exercise);
+  const navigate = useNavigate();
       
   // объект результата
   const [resultTrain, setResultTrain] = useState({});
@@ -37,6 +40,10 @@ function Trainer() {
 
   const [attempts, setAttempts] = useState(1);
 
+  const [messageAlert, setMessageAlert] = useState('Чтобы начать выполнять упражнение, нажмите Enter');
+  const [showAlert, setShowAlert] = useState(false);
+  const [kindAlert, setKindAlert] = useState('normal');
+
   const [minutes, setMinutes] = useState(Math.trunc(exercise.time / 60));
   const [seconds, setSeconds] = useState(Math.round(exercise.time - Math.trunc(exercise.time / 60) * 60));
 
@@ -46,6 +53,7 @@ function Trainer() {
   useEffect(() => {
     setLetters(Array.from(document.querySelectorAll('[data-letter]')));
     ref.current.focus();
+    setShowAlert(true);
   }, []);
 
 
@@ -65,7 +73,7 @@ function Trainer() {
   useEffect(() => {
     
     if(currentLetter === (exercise.text.length)) {
-      completeExercises();
+      completeExercises('successfully', 'Упражнение завершено! Вас автоматически перебросит на Важу страницу...');
     }
     
   }, [currentLetter]);
@@ -75,7 +83,7 @@ function Trainer() {
     if(seconds === 0) {
       if(minutes === 0) {
         console.log("!")
-        completeExercises();
+        completeExercises('unsuccessfully', 'Время вышло! Вас автоматически перебросит на Важу страницу...');
       } else {
         setSeconds(59);
         setMinutes(prev => prev - 1);
@@ -112,10 +120,37 @@ function Trainer() {
   }, [resultTrain])
 
 
-  function completeExercises() {
+  useEffect(() => {
+    if (countError === exercise.allowedCountError) {
+      completeExercises('unsuccessfully', 'Превышен лимит ошибок! Упражнение не выполнено! Вас автоматически перебросит на Важу страницу...');
+    }
+  }, [countError]);
+
+  function completeExercises(status, text) {
+
     setIsPlay(false);
     setAttempts(0);
     setTimeEnd(new Date().getTime());
+
+    setShowAlert(false);
+
+    switch(status) {
+      case 'successfully':
+        setKindAlert('normal');
+        break;
+      case 'unsuccessfully':
+        setKindAlert('error');
+        break
+
+      default:
+    }
+
+    setMessageAlert(text);
+    setShowAlert(true);
+
+    setTimeout(() => {
+      navigate('/user');
+    }, 6000);   
   }
 
 
@@ -144,6 +179,7 @@ function Trainer() {
 
         setIsPlay(true);
         setTimeStart(new Date().getTime());
+        setShowAlert(false);
 
       } else if (event.key === 'CapsLock') {
         ref.current.focus();
@@ -171,9 +207,24 @@ function Trainer() {
     ref.current.focus();
   }
 
+  // выход 
+  function goOut() {
+    if(currentLetter !== (exercise.text.length)) {
+      completeExercises('unsuccessfully', 'Вы ещё не закончили упражнение! Данные не сохранятся! Вас автоматически перебросит на Важу страницу...');
+    }
+  }
+
 
   return (
     <div ref={ref} className='trainer' tabIndex={0} onKeyUp={onKeyUpHandler} onKeyDown={onKeyDownHandler}>
+
+        <div className='head-trainer'>
+          <button className='btn-go-out' onClick={goOut}>Выход</button>
+          {
+            showAlert && <Alert kind={kindAlert}>{messageAlert}</Alert>
+          }
+        </div>
+
         <PanelTrainer
            length={exercise.text.length} 
            recruited={currentLetter} 

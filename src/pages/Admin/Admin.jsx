@@ -5,10 +5,11 @@ import ConstructorTask from '../../components/ModalWindow/ConstructorTask/Constr
 import ConstructorLevel from '../../components/ModalWindow/ConstructorLevel/ConstructorLevel';
 import './Admin.css';
 import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 
 function Admin() {
 
-    const login = 'Максим Расторгуев';
+    const login = useSelector((state) => state.user.login);
 
     const [isOpenModalWindow, setIsOpenModalWindow] = useState(false);
     const [typeModalWindow, setTypeModalWindow] = useState('info');
