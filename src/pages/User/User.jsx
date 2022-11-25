@@ -38,7 +38,7 @@ function User() {
     }
 
     
-    const login = useSelector((state) => state.user.login);
+    const username = useSelector((state) => state.user.username);
 
     const [dataChart, setData] = useState(dataSpeed);
     const [showLine, setShowLine] = useState(true);
@@ -131,7 +131,7 @@ function User() {
     
         <div className='User_head'>
             <div className='User_head_login'>
-                {login}
+                {username}
             </div>
             <button className='User_head_btn-info' onClick={openModalWindow}>
                 Справочная информация

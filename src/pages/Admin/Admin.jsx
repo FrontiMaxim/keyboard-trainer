@@ -9,7 +9,7 @@ import { useSelector } from 'react-redux';
 
 function Admin() {
 
-    const login = useSelector((state) => state.user.login);
+    const username = useSelector((state) => state.user.username);
 
     const [isOpenModalWindow, setIsOpenModalWindow] = useState(false);
     const [typeModalWindow, setTypeModalWindow] = useState('info');
@@ -93,7 +93,7 @@ function Admin() {
         
             <div className='admin_head'>
                 <div className='admin_head_login'>
-                    {login}
+                    {username}
                     <button className='admin_head_btn-change' onClick={openModalWindow} data-type="change"> 
                          Настроить уровень
                     </button>

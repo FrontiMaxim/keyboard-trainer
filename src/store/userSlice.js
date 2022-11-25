@@ -3,7 +3,8 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
     id: 0,
     role: undefined,
-    login: '',
+    username: '',
+    password: ''
 };
 
 const userSlice = createSlice({
@@ -11,10 +12,11 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     installUser: (state, action) => {
-        const {id, role, login} = action.payload;
+        const {id, role, username, password} = action.payload;
         state.id = id;
-        state.login = login;
+        state.username = username;
         state.role = role;
+        state.password = password;
     }
   },
 });
