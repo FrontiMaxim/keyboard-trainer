@@ -5,6 +5,8 @@ import {restrictions} from './restrictions';
 
 import '../Constructor.css';
 import './ConstructorLevel.css';
+import axios from 'axios';
+import { useEffect } from 'react';
 
 
 const {minLenghtTextOneLevel,
@@ -19,17 +21,54 @@ const {minLenghtTextOneLevel,
 
 function ConstructorLevel({closeModalWindow}) {
 
-    const { register, handleSubmit} = useForm();
+    const { register, handleSubmit, setValue} = useForm({
+        defaultValues: {
+            level: 1,
+            maxCountError: 0,
+            maxLenghtText: 0,
+            minLenghtText: 0,
+            timePressing: 0,
+            zones: [] 
+        },
+    });
+
 
     const onSubmit = (data) => {
         let zones = data.zones;
         data.zones = zones.join('');
         console.log(data);
+
+        axios.post('./', data).catch(err => console.log(err));
+
         closeModalWindow();
     };
 
     const [level, setLevel] = useState('1');
     const [minLenghtText, setMinLenghtText] = useState(10);
+
+
+    // загрузка уровня по умолчанию и при выборе
+    useEffect(() => {
+        downloadLevel();
+    }, [level]);
+
+
+    function downloadLevel() {
+        axios.get('./', {
+            params: {
+                level
+            }
+        })
+        .then(data => {
+            // setValue('level', data.level);
+            // setValue('maxCountError', data.maxCountError);
+            // setValue('maxLenghtText', data.maxLenghtText);
+            // setValue('minLenghtText', data.minLenghtText);
+            // setValue('timePressing', data.timePressing);
+            // setValue('zones', data.zones.split());
+        })
+        .catch(err => console.log(err));
+    }
     
     return (
         <div className='modalWindow'>
@@ -69,6 +108,7 @@ function ConstructorLevel({closeModalWindow}) {
                         max={maxPressKey}
                         {...register("timePressing")}
                     />
+                    <div className="prompt">Допустимый диапазон: {minPressKey}-{maxPressKey}</div>
                 </label>
 
                 <label htmlFor="minLenghtText">
@@ -87,6 +127,17 @@ function ConstructorLevel({closeModalWindow}) {
                         {...register("minLenghtText")}
                         onChange={(e) => setMinLenghtText(e.target.value)}
                     />
+                    <div className="prompt">
+                        Допустимый диапазон: {   
+                            level === '1' ? minLenghtTextOneLevel :
+                            level === '2' ? maxLenghtTextOneLevel : maxLenghtTextTwoLevel
+                        }
+                        - 
+                        {
+                            level === '1' ? maxLenghtTextOneLevel :
+                            level === '2' ? maxLenghtTextTwoLevel : maxLenghtTextThreeLevel
+                        }
+                    </div>
                 </label>
 
                 <label htmlFor="maxLenghtText">
@@ -101,6 +152,14 @@ function ConstructorLevel({closeModalWindow}) {
                         }
                         {...register("maxLenghtText")}
                     />
+                    <div className="prompt">
+                        Допустимый диапазон: {minLenghtText}
+                        - 
+                        {
+                            level === '1' ? maxLenghtTextOneLevel :
+                            level === '2' ? maxLenghtTextTwoLevel : maxLenghtTextThreeLevel
+                        }
+                    </div>
                 </label>
 
                 <label htmlFor="maxCountError">
@@ -113,6 +172,14 @@ function ConstructorLevel({closeModalWindow}) {
                             level === '2' ? maxCountErrorTwoLevel : maxCountErrorThreeLevel}
                         {...register("maxCountError")}
                     />
+                    <div className="prompt">
+                        Допустимый диапазон: 0
+                        - 
+                        {
+                            level === '1' ? maxCountErrorOneLevel:
+                            level === '2' ? maxCountErrorTwoLevel : maxCountErrorThreeLevel
+                        }
+                    </div>
                 </label>
 
                 <div className='constructor_list-btn'>

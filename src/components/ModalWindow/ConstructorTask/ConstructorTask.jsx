@@ -4,36 +4,99 @@ import { useForm } from "react-hook-form";
 import {restrictions} from './restrictions';
 import './ConstructorTask.css';
 import '../Constructor.css';
+import { useEffect } from 'react';
+import axios from 'axios';
 
-const {minLengthNameText, maxLenghtNameText} = restrictions;
-const characterSet = ['f', 'd', 's'];
+const {minLengthNameText, maxLengthNameText} = restrictions;
 
-function ConstructorTask({closeModalWindow, nameForm, nameBtn}) {
+const letterForZone = {
+    1: 'Ёё!1ЙйФфЯя+=ЪъЭэ,.',
+    2: '"2№3ЦцЫыЧчУуВвСс_-ЖжЮюБбДдЗз',
+    3: ';4КкАаМм ЬьЛлЩщ(9)0',
+    4: '%5ЕеПпИиГгОоТтРрНн:6*8'
+}
 
-   const {register, handleSubmit} = useForm();
+function ConstructorTask({closeModalWindow, nameForm, nameBtn, id}) {
+
+
+   const { register, handleSubmit, setValue} = useForm({
+        defaultValues: {
+            id: '',
+            nameExercise: '',
+            level: 1,
+            allowedCountError: 0,
+        },
+    });
+
+    const [infoLevel, setInfoLevel ] = useState({
+        maxCountError: 0,
+        maxLengthText: 0,
+        minLengthText: 0
+    });
 
    const [methodAdding, setMethodAdding] = useState('manually');
 
    const [lengthTextGeneration, setLengthTextGeneration] = useState(0);
    const [text, setText] = useState('');
 
+   const [ characters, setCharacters ] = useState('');
+
     const onSubmit = (data) => {
        
-        if(checkText(characterSet)) {      
-            data['text'] = text;
-            console.log(data);
-        } else {
-            alert('Текст упражнения не прошёл проверку на соответствие! Перепроверьте его!');
-        }
+        // if(checkText(characterSet)) {      
+        //     data['text'] = text;
+        //     console.log(data);
+        // } else {
+        //     alert('Текст упражнения не прошёл проверку на соответствие! Перепроверьте его!');
+        // }
 
         closeModalWindow();
     } 
 
+
+    // подгрузка упражнений
+    // useEffect(() => {
+    //     if (nameForm === 'Редактивание упражнения') {
+    //         axios.get('./', {
+    //             params: id
+    //         })
+    //         .then(data => {
+    //             setValue('id', data.id);
+    //             setValue('nameExercise', data.nameExercise);
+    //             setValue('level', data.level);
+    //             setValue(' allowedCountError', data.allowedCountError);
+    //         })
+    //         .catch(err => {
+    //             console.log(err);
+    //         });
+    //     }
+    // }, []);
+
+
+    // // подгрузка ограничений уровня
+    // useEffect(() => {
+    //     axios.get('./', {
+    //         params: register.level
+    //     })
+    //     .then(data => {
+    //         setInfoLevel({
+    //             maxCountError: data.maxCountError,
+    //             maxLenghtText: data.maxLenghtText,
+    //             minLenghtText: data.minLenghtText,
+    //         });
+
+    //         characterSet = '';
+    //         data.zones.map(z => characterSet += letterForZone[z]);
+    //     })
+    //     .catch(err => console.log(err));
+    // }, [register.level]);
+
+
     // автоматическая генерация текста
-    function generateText(e, characterSet) {
+    function generateText() {
         let text = '';
         for(let i = 0; i < lengthTextGeneration; i++) {
-            text += characterSet[Math.floor(Math.random() * characterSet.length)];
+            text += characters[Math.floor(Math.random() * characters.length)];
         }
         setText(text);
     }
@@ -73,9 +136,10 @@ function ConstructorTask({closeModalWindow, nameForm, nameBtn}) {
                         type="text"
                         id="nameTask" 
                         minLength={minLengthNameText} 
-                        maxLength={maxLenghtNameText} 
-                        {...register("name")}
+                        maxLength={maxLengthNameText} 
+                        {...register("nameExercise")}
                     />
+                    <div className="prompt">Допустимая длина названия: {minLengthNameText}-{maxLengthNameText}</div>
                 </label>
 
                 <label htmlFor="levelTask">
@@ -104,15 +168,21 @@ function ConstructorTask({closeModalWindow, nameForm, nameBtn}) {
                         <textarea 
                             id="addingText" 
                             onChange={e => setText(e.target.value)}
-                            // мин и макс длину указать
+                            minLength={infoLevel.minLengthText}
+                            maxLength={infoLevel.maxLengthText}
                         />
+                        <div className="prompt">Допустимая длина текста: {infoLevel.minLengthText}-{infoLevel.maxLengthText}</div>
                     </label>
                 }
                 {
                     methodAdding === "file" && 
                     <label htmlFor="addingText">
                         <input type="file" id="addingText" onChange={readFile}/>
-                        <textarea readonly value={text} /*ограничения по уровню*/ />
+                        <textarea readonly value={text} 
+                            minLength={infoLevel.minLengthText}
+                            maxLength={infoLevel.maxLengthText}
+                        />
+                        <div className="prompt">Допустимая длина текста: {infoLevel.minLengthText}-{infoLevel.maxLengthText}</div>
                     </label>
                     
                 }
@@ -124,10 +194,17 @@ function ConstructorTask({closeModalWindow, nameForm, nameBtn}) {
                             type="number" 
                             id="lengthText" 
                             onChange={e => setLengthTextGeneration(e.target.value)}
-                            // мин и макс длину указать
+                            minLength={infoLevel.minLengthText}
+                            maxLength={infoLevel.maxLengthText}
                         />
-                        <button type="button" className="btn-generate" onClick={e => generateText(e, characterSet)}>Сгенерировать</button>
-                        <textarea readonly value={text}/*ограничения по уровню */ />
+                        <div className="prompt">Допустимая длина текста: {infoLevel.minLengthText}-{infoLevel.maxLengthText}</div>
+                        
+                        <button type="button" className="btn-generate" onClick={generateText}>Сгенерировать</button>
+                        <textarea readonly value={text}
+                            minLength={infoLevel.minLengthText}
+                            maxLength={infoLevel.maxLengthText}
+                        />
+                        <div className="prompt">Допустимая длина текста: {infoLevel.minLengthText}-{infoLevel.maxLengthText}</div>
                     </label>
                 }
 
@@ -137,9 +214,11 @@ function ConstructorTask({closeModalWindow, nameForm, nameBtn}) {
                     <input 
                         type="number"
                         id="countError" 
-                        // мин и макс количество ошибок
-                        {...register("countError")}
+                        minLength='0'
+                        maxLength={infoLevel.maxCountError}
+                        {...register("allowedCountError")}
                     />
+                    <div className="prompt">Допустимый диапозон: 0-{infoLevel.maxCountError}</div>
                 </label>
 
                 <div className='constructor_list-btn'>
