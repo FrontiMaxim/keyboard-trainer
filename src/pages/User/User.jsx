@@ -31,6 +31,7 @@ ChartJS.register(
 function User() {
 
     const username = useSelector((state) => state.user.username);
+    const idUser = useSelector((state) => state.user.id);
 
     const [showLine, setShowLine] = useState(true);
     const [showBar, setShowBar] = useState(false);
@@ -39,77 +40,136 @@ function User() {
     const navigate = useNavigate();
 
     const [exercises, setExercises] = useState([]);
-    const [statisticUser, setstatisticUser] = useState({});
+    const [statisticUser, setStatisticUser] = useState({});
 
     const [level, setLevel] = useState('1');
 
     const dispatch = useDispatch();
 
     // данные по скорости для графиков
-    const [dataSpeed, setDataSpeed] = useState({
-            labels: ['14.02.2022', '15.02.2022', '16.02.2022', '17.02.2022'],
-            datasets: [
-                {
-                data: [3, 5, 2, 4],
-                lineTension: 0.5,
-                borderColor: 'grey',
-                }
-            ]
-        }
-    )
+    const [dataSpeed, setDataSpeed] = useState({});
 
 
     // данные по ошибкам для графиков
-    const [dataError, setDataError] = useState({
-            labels: ['14.02.2022', '15.02.2022', '16.02.2022', '17.02.2022'],
-            datasets: [
-                {
-                data: [6, 8, 2, 5],
-                lineTension: 0.5,
-                fill: true,
-                borderColor: 'grey',
-                backgroundColor: '#edfce9',
-                }
-            ]
-        }
-    )
+    const [dataError, setDataError] = useState({});
 
 
     // данные по тренировкам для графиков
-    const [dataCountTrain, setdataCountTrain] = useState({
-            labels: ['14.02.2022', '15.02.2022', '16.02.2022', '17.02.2022', '18.02.2022'],
-            datasets: [
-                {
-                data: [1, 1, 2, 1, 3],
-                lineTension: 0.5,
-                backgroundColor: 'grey'
-                }
-            ]
-        }
-    )
+    const [dataCountTrain, setdataCountTrain] = useState({});
 
-    const [dataChart, setData] = useState(dataSpeed);
+    const [dataChart, setData] = useState({
+        labels: [],
+        datasets: [
+            {
+            data: [] ,
+            lineTension: 0.5,
+            fill: true,
+            borderColor: 'grey',
+            backgroundColor: '#edfce9',
+            }
+        ]
+    });
 
 
     useEffect(() => {
         loadExercises();
+        loadStatistic();
     }, [level])
 
 
     function loadExercises() {
-        axios.get('/fsdgf', {
-            params: {levelExercise: level}
-        })
+        axios.get('/exercise/get/all')
         .then(response => {
-            console.log(response);
-            setExercises(response.data);
+            const data = response.data;
+            setExercises(data);
         });
     }
-   
+
+    async function loadStatistic() {
+        await axios.get('/user/chart', {
+            params: {idUser: idUser}
+        })
+        .then(response => {
+            const data = response.data;
+
+            const dataError = data.dataError;
+            const dataSpeed = data.dataSpeed;
+            const dataTrain = data.dataTrain;
+
+            let arrayDate = [];
+            let arrayParam = [];
+
+            dataError.forEach(i => {
+                arrayDate.push(i.date);
+                arrayParam.push(i.param);
+            });
+
+            setDataError({
+                labels: arrayDate.sort(),
+                datasets: [
+                    {
+                    data: arrayParam ,
+                    lineTension: 0.5,
+                    fill: true,
+                    borderColor: 'grey',
+                    backgroundColor: '#edfce9',
+                    }
+                ]
+            });
+            
+            arrayDate = [];
+            arrayParam = [];
+
+            dataSpeed.forEach(i => {
+                arrayDate.push(i.date);
+                arrayParam.push(i.param);
+            });
+
+            setDataSpeed({
+                labels: arrayDate.sort(),
+                datasets: [
+                    {
+                    data: arrayParam,
+                    lineTension: 0.5,
+                    borderColor: 'grey',
+                    }
+                ]
+            });
+
+            arrayDate = [];
+            arrayParam = [];
+
+            dataTrain.forEach(i => {
+                arrayDate.push(i.date);
+                arrayParam.push(i.param);
+            });
+
+            setdataCountTrain({
+                labels: arrayDate.sort(),
+                datasets: [
+                    {
+                    data: arrayParam,
+                    lineTension: 0.5,
+                    backgroundColor: 'grey'
+                    }
+                ]
+            });
+        });
+
+        await axios.get('/user/statistics/get', {
+            params: {idUser: idUser}
+        })
+        .then(response => {
+            console.log(response.data)
+            setStatisticUser(response.data);
+        });
+
+        setData(dataSpeed);
+    }
+
 
     function changeData(e) {
         const typeData = e.target.className;
-        console.log(typeData);
 
         switch(typeData) {
             case 'column-error':
@@ -138,7 +198,7 @@ function User() {
     }
 
 
-    async function goToExercise(e) {
+    async function goToExercise(e, id) {
 
         const exercise = {
             id: '',
@@ -149,7 +209,6 @@ function User() {
 
         let level = 1;
 
-        console.log(e.currentTarget.id)
         await axios.get('/exercise/get', {
             params: {idExercise: e.currentTarget.id}
         })
@@ -169,6 +228,7 @@ function User() {
         .then(response => {
             const data = response.data;
             exercise.time = data.click_time * exercise.text.length;
+            exercise.level = data;
         });
 
         dispatch(installExercise(exercise));
@@ -178,7 +238,7 @@ function User() {
     
     return (
     <div className='User'>
-
+        
         {
             isOpenModalWindow && 
             <Information closeModalWindow={closeModalWindow} />
@@ -206,10 +266,11 @@ function User() {
 
                 <div className='User_main_exercises_list'>
                     Список упражнений
-                    <ul onClick={goToExercise}>
+                    <ul>
                         {
-                            exercises.map(({id, name, ...data}) => {
-                                return <li key={id} id={id}>{name}</li>
+                            exercises.map((i) => {
+                                if(parseInt(i.level) === parseInt(level))
+                                return <li key={i.id} id={i.id} onClick={(e) => goToExercise(e, i.id)}>{i.name}</li>
                             })
                         }
                     </ul>
@@ -228,9 +289,9 @@ function User() {
                     </thead>
                     <tbody>
                         <tr onClick={changeData}>
-                            <td className='column-speed'>2</td>
-                            <td className='column-error'>5</td>
-                            <td className='column-count-train'>10</td>
+                            <td className='column-speed'>{statisticUser.averageSpeed}</td>
+                            <td className='column-error'>{statisticUser.averageError}</td>
+                            <td className='column-count-train'>{statisticUser.countExecution}</td>
                         </tr>
                     </tbody>
                 </table>

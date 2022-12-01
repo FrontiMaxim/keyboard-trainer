@@ -20,8 +20,17 @@ function Admin() {
 
 
     const [users, setUsers] = useState([]);
-    const [statisticExercise, setstatisticExercise] = useState({});
-    const [statisticUser, setstatisticUser] = useState({});
+    const [statisticExercise, setStatisticExercise] = useState({
+        averageError: 0,
+        averageTimeExecution: 0,
+        countExecution: 0
+    });
+    
+    const [statisticUser, setStatisticUser] = useState({
+        averageError: 0,
+        averageSpeed: 0,
+        countExecution: 0
+    });
 
     function openModalWindow(event) {
         const typeBtn = event.target.dataset.type;
@@ -61,7 +70,6 @@ function Admin() {
     function loadUsers() {
         axios.get('/user/get/all')
         .then(response => {
-            console.log(response);
             setUsers(response.data);
         });
     }
@@ -83,23 +91,22 @@ function Admin() {
 
 
     async function loadStatisticExercises(e, id) {
-        await axios.get('/user/statistics/get', {
-            params: {}
+        await axios.get('/exercise/statistics/get', {
+            params: {idExercise: id}
         })
         .then(response => {
-            console.log(response);
-            setstatisticUser(response.data)
+            setStatisticExercise(response.data)
         });
     }
 
 
-    function loadStatisticUser(e, id) {
-        axios.get('/exercise/statistics/get', {
-            params: {}
+    async function loadStatisticUser(e, id) {
+        axios.get('/user/statistics/get', {
+            params: {idUser: id}
         })
         .then(response => {
             console.log(response);
-            setstatisticExercise(response.data)
+            setStatisticUser(response.data)
         });
     }
 
@@ -141,8 +148,7 @@ function Admin() {
                     Справочная информация
                 </button>
             </div>
-
-
+           
             <div className='admin_main'>
                 <div className='admin_main_exercises'>
                     <div className='admin_main_list'>
@@ -184,9 +190,9 @@ function Admin() {
                         </thead>
                         <tbody>
                             <tr>
-                                <td>2</td>
-                                <td>5</td>
-                                <td>10</td>
+                                <td>{statisticExercise.averageError}</td>
+                                <td>{statisticExercise.averageTimeExecution}</td>
+                                <td>{statisticExercise.countExecution}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -199,7 +205,7 @@ function Admin() {
                         <ul>
                             {
                                 users.map(({id, username, role, ...data}) => {
-                                    if (role !== 1) return <li key={id} onClick={(e) => loadStatisticUser(e, id)}>{username}</li>
+                                    if (role !== 1) return <li key={id} id={id} onClick={(e) => loadStatisticUser(e, id)}>{username}</li>
                                 })
                             }
                         </ul>
@@ -212,10 +218,10 @@ function Admin() {
                             <th>Количество тренировок</th>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>2</td>
-                                <td>5</td>
-                                <td>10</td>
+                            <tr> 
+                                <td>{statisticUser.averageSpeed}</td>
+                                <td>{statisticUser.averageError}</td>
+                                <td>{statisticUser.countExecution}</td>
                             </tr>
                         </tbody>
                     </table>

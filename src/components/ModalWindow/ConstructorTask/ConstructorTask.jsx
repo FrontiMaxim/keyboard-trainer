@@ -45,7 +45,7 @@ function ConstructorTask({closeModalWindow, nameForm, nameBtn, id, loadExercise}
 
    const [ characters, setCharacters ] = useState('');
 
-    const onSubmit = (data) => {
+    const onSubmit = async (data) => {
        
         if(checkText(characters)) {      
             data['text'] = text;
@@ -56,7 +56,7 @@ function ConstructorTask({closeModalWindow, nameForm, nameBtn, id, loadExercise}
             } else {
                 axios.post('/exercise/create', data);
             }
-
+            await loadExercise();
         } else {
             alert('Текст упражнения не прошёл проверку на соответствие! Перепроверьте его!');
         }
@@ -78,7 +78,7 @@ function ConstructorTask({closeModalWindow, nameForm, nameBtn, id, loadExercise}
                 setValue('name', data.name);
                 setValue('acceptable_count_errors', data.acceptable_count_errors);
                 
-                //setLevel(data.level.id);
+                setLevel(data.level);
                 setText(data.text);
             })
             .catch(err => {
@@ -104,6 +104,7 @@ function ConstructorTask({closeModalWindow, nameForm, nameBtn, id, loadExercise}
             });
 
             setCharacters('');
+            console.log(data)
             data.keyboard_area.split('').map(z => setCharacters(prev => prev += letterForZone[z]));
         })
         .catch(err => console.log(err));
@@ -162,7 +163,7 @@ function ConstructorTask({closeModalWindow, nameForm, nameBtn, id, loadExercise}
 
                 <label htmlFor="levelTask">
                     <p>Выберите уровень сложности:</p>
-                    <select id="levelTask" onChange={(e) => setLevel(e.target.value)} >
+                    <select id="levelTask" onChange={(e) => setLevel(e.target.value)} value={level}>
                         <option value="1">1</option>
                         <option value="2">2</option>
                         <option value="3">3</option>

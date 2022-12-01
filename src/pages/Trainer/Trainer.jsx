@@ -9,6 +9,7 @@ import Keyboard from '../../components/Keyboard/Keyboard';
 import './Trainer.css';
 import Alert from '../../components/Alert/Alert';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 
 function Trainer() {
@@ -16,11 +17,9 @@ function Trainer() {
   const specialSymbols = ['Shift', 'Control', 'Meta', 'Alt'];
 
   const exercise = useSelector((state) => state.exercise);
+  const user = useSelector((state) => state.user);
   const navigate = useNavigate();
       
-  // объект результата
-  const [resultTrain, setResultTrain] = useState({});
-
   const [rigthPart, setRigthPart] = useState('');
   const [remainPart, setRemainPart] = useState(exercise.text);
 
@@ -97,27 +96,21 @@ function Trainer() {
     if (timeEnd !== 0) {
 
       const delta = (timeEnd - timeStart) / 1000;
+
       const result = {
-        idUser: undefined,
-        idExercises: undefined,
-        speed: Math.floor((currentLetter + 1) / delta),
-        countError: countError,
+        user: user,
+        exercise: exercise,
+        typing_speed: Math.floor((currentLetter + 1) / delta),
+        count_errors: countError,
         date: new Date().toLocaleDateString(),
-        time: `${Math.trunc(delta / 60)}:${Math.round(delta - Math.trunc(delta / 60) * 60)}`
+        execution_time: `${Math.round(delta)}`
       }
-  
-      setResultTrain({
-        ...result
-      });
+
+      axios.post('/statistics/create', result);
     }
    
   }, [timeEnd]);
 
-
-
-  useEffect(() => {
-    console.log(resultTrain)
-  }, [resultTrain])
 
 
   useEffect(() => {
@@ -229,7 +222,7 @@ function Trainer() {
            length={exercise.text.length} 
            recruited={currentLetter} 
            errorLetter={countError} 
-           allowedNumberErrors={exercise.allowedCountError}
+           allowedNumberErrors={exercise.acceptable_count_errors}
            minutes={minutes} 
            seconds={seconds} 
           />
