@@ -47,6 +47,11 @@
     margin: 10px 0;
 }
 
+.admin_main_list li:hover {
+    cursor: pointer;
+    background-color: orangered;
+}
+
 .admin_main_exercises li {
     display: flex;
     align-items: center;

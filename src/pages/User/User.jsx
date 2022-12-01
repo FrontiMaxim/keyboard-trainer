@@ -14,6 +14,10 @@ import { useState } from 'react';
 import Information from '../../components/ModalWindow/Information/Information';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import {installExercise} from '../../store/exerciseSlice';
 
 ChartJS.register(
     CategoryScale,
@@ -26,66 +30,82 @@ ChartJS.register(
 
 function User() {
 
-    const dataSpeed = {
-        labels: ['14.02.2022', '15.02.2022', '16.02.2022', '17.02.2022'],
-        datasets: [
-            {
-              data: [3, 5, 2, 4],
-              lineTension: 0.5,
-              borderColor: 'grey',
-            }
-        ]
-    }
-
-    
     const username = useSelector((state) => state.user.username);
 
-    const [dataChart, setData] = useState(dataSpeed);
     const [showLine, setShowLine] = useState(true);
     const [showBar, setShowBar] = useState(false);
     const [isOpenModalWindow, setIsOpenModalWindow] = useState(false);
 
     const navigate = useNavigate();
 
-    const listExercises = [
-        {id: 0, name: 'Название_1'},
-        {id: 1, name: 'Название_2'},
-        {id: 2, name: 'Название_3'},
-        {id: 3, name: 'Название_4'},
-        {id: 4, name: 'Название_5'},
-        {id: 5, name: 'Название_6'},
-        {id: 6, name: 'Название_7'},
-        {id: 7, name: 'Название_8'},
-        {id: 8, name: 'Название_9'},
-        {id: 9, name: 'Название_10'},
-        {id: 10, name: 'Название_11'},
-        {id: 11, name: 'Название_12'},
-    ];
+    const [exercises, setExercises] = useState([]);
+    const [statisticUser, setstatisticUser] = useState({});
+
+    const [level, setLevel] = useState('1');
+
+    const dispatch = useDispatch();
+
+    // данные по скорости для графиков
+    const [dataSpeed, setDataSpeed] = useState({
+            labels: ['14.02.2022', '15.02.2022', '16.02.2022', '17.02.2022'],
+            datasets: [
+                {
+                data: [3, 5, 2, 4],
+                lineTension: 0.5,
+                borderColor: 'grey',
+                }
+            ]
+        }
+    )
 
 
-    const dataError = {
-        labels: ['14.02.2022', '15.02.2022', '16.02.2022', '17.02.2022'],
-        datasets: [
-            {
-              data: [6, 8, 2, 5],
-              lineTension: 0.5,
-              fill: true,
-              borderColor: 'grey',
-              backgroundColor: '#edfce9',
-            }
-        ]
+    // данные по ошибкам для графиков
+    const [dataError, setDataError] = useState({
+            labels: ['14.02.2022', '15.02.2022', '16.02.2022', '17.02.2022'],
+            datasets: [
+                {
+                data: [6, 8, 2, 5],
+                lineTension: 0.5,
+                fill: true,
+                borderColor: 'grey',
+                backgroundColor: '#edfce9',
+                }
+            ]
+        }
+    )
+
+
+    // данные по тренировкам для графиков
+    const [dataCountTrain, setdataCountTrain] = useState({
+            labels: ['14.02.2022', '15.02.2022', '16.02.2022', '17.02.2022', '18.02.2022'],
+            datasets: [
+                {
+                data: [1, 1, 2, 1, 3],
+                lineTension: 0.5,
+                backgroundColor: 'grey'
+                }
+            ]
+        }
+    )
+
+    const [dataChart, setData] = useState(dataSpeed);
+
+
+    useEffect(() => {
+        loadExercises();
+    }, [level])
+
+
+    function loadExercises() {
+        axios.get('/fsdgf', {
+            params: {levelExercise: level}
+        })
+        .then(response => {
+            console.log(response);
+            setExercises(response.data);
+        });
     }
-
-    const dataCountTrain = {
-        labels: ['14.02.2022', '15.02.2022', '16.02.2022', '17.02.2022', '18.02.2022'],
-        datasets: [
-            {
-              data: [1, 1, 2, 1, 3],
-              lineTension: 0.5,
-              backgroundColor: 'grey'
-            }
-        ]
-    }
+   
 
     function changeData(e) {
         const typeData = e.target.className;
@@ -117,9 +137,44 @@ function User() {
         setIsOpenModalWindow(false);
     }
 
-    function goToExercise(e) {
+
+    async function goToExercise(e) {
+
+        const exercise = {
+            id: '',
+            text: '',
+            acceptable_count_errors: 0,
+            time: ''
+        }
+
+        let level = 1;
+
+        console.log(e.currentTarget.id)
+        await axios.get('/exercise/get', {
+            params: {idExercise: e.currentTarget.id}
+        })
+        .then(response => {
+            const data = response.data;
+
+            exercise.id = data.id;
+            exercise.text = data.text;
+            exercise.acceptable_count_errors = data.acceptable_count_errors;
+            level = data.level;
+        });
+
+
+        await axios.get('/level/get', {
+            params: {numberLevel: level}
+        })
+        .then(response => {
+            const data = response.data;
+            exercise.time = data.click_time * exercise.text.length;
+        });
+
+        dispatch(installExercise(exercise));
         navigate('/trainer');
     }
+
     
     return (
     <div className='User'>
@@ -140,7 +195,7 @@ function User() {
         <div className='User_main'>
             <div className='User_main_exercises'>
 
-                <div className='User_main_exercises_level'>
+                <div className='User_main_exercises_level' onChange={(e) => setLevel(e.target.value)}>
                     Уровень сложности: 
                     <select>
                         <option value='1'>1</option>
@@ -153,8 +208,8 @@ function User() {
                     Список упражнений
                     <ul onClick={goToExercise}>
                         {
-                            listExercises.map(({id, name}) => {
-                                return <li key={id}>{name}</li>
+                            exercises.map(({id, name, ...data}) => {
+                                return <li key={id} id={id}>{name}</li>
                             })
                         }
                     </ul>

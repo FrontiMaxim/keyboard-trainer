@@ -173,9 +173,8 @@ function ConstructorLevel({closeModalWindow}) {
                         {...register("maximum_count_errors")}
                     />
                     <div className="prompt">
-                        Допустимый диапазон: 0
-                        - 
-                        {
+                        Допустимый диапазон: 
+                        0-{
                             level === '1' ? maxCountErrorOneLevel:
                             level === '2' ? maxCountErrorTwoLevel : maxCountErrorThreeLevel
                         }

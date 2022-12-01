@@ -6,6 +6,7 @@ import ConstructorLevel from '../../components/ModalWindow/ConstructorLevel/Cons
 import './Admin.css';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import axios from 'axios';
 
 function Admin() {
 
@@ -15,24 +16,12 @@ function Admin() {
     const [typeModalWindow, setTypeModalWindow] = useState('info');
 
     const [exercises, setExercises] = useState([]);
+    const [idExercise, setIdExercises] = useState(0);
+
+
     const [users, setUsers] = useState([]);
     const [statisticExercise, setstatisticExercise] = useState({});
     const [statisticUser, setstatisticUser] = useState({});
-
-    const listExercises = [
-        {id: 0, name: 'Название_1'},
-        {id: 1, name: 'Название_2'},
-        {id: 2, name: 'Название_3'},
-        {id: 3, name: 'Название_4'},
-        {id: 4, name: 'Название_5'},
-        {id: 5, name: 'Название_6'},
-        {id: 6, name: 'Название_7'},
-        {id: 7, name: 'Название_8'},
-        {id: 8, name: 'Название_9'},
-        {id: 9, name: 'Название_10'},
-        {id: 10, name: 'Название_11'},
-        {id: 11, name: 'Название_12'},
-    ];
 
     function openModalWindow(event) {
         const typeBtn = event.target.dataset.type;
@@ -60,15 +49,60 @@ function Admin() {
     }
 
 
-    // реализовать удаление упражнение
-    function deleteExercises() {
+    // удаление упражнения
+    async function deleteExercises(e, id) {
+        await axios.delete('/exercise/delete', {
+            params: {idExercise: id}
+        })
+        loadExercise();
+    }
 
+    // загрузка пользователей
+    function loadUsers() {
+        axios.get('/user/get/all')
+        .then(response => {
+            console.log(response);
+            setUsers(response.data);
+        });
+    }
+
+    // загрузка упражнений
+    async function loadExercise() {
+        await axios.get('/exercise/get/all')
+        .then(response => {
+            console.log(response);
+            setExercises(response.data);
+        });
     }
 
     // загрузка упражнений и пользователей
     useEffect(() => {
-
+        loadUsers();
+        loadExercise();
     }, []);
+
+
+    async function loadStatisticExercises(e, id) {
+        await axios.get('/user/statistics/get', {
+            params: {}
+        })
+        .then(response => {
+            console.log(response);
+            setstatisticUser(response.data)
+        });
+    }
+
+
+    function loadStatisticUser(e, id) {
+        axios.get('/exercise/statistics/get', {
+            params: {}
+        })
+        .then(response => {
+            console.log(response);
+            setstatisticExercise(response.data)
+        });
+    }
+
 
     return (
         <div className='admin'>
@@ -81,8 +115,10 @@ function Admin() {
                 isOpenModalWindow && (typeModalWindow === 'redact' || typeModalWindow === 'create') &&
                 <ConstructorTask 
                     closeModalWindow={closeModalWindow} 
-                    nameForm={typeModalWindow === 'redact' ? 'Редактивание упражнения' : 'Создание упражнения'} 
+                    nameForm={typeModalWindow === 'redact' ? 'Редактирование упражнения' : 'Создание упражнения'} 
                     nameBtn={typeModalWindow === 'redact' ? 'Сохранить' : 'Создать'}
+                    loadExercise={loadExercise}
+                    id={idExercise}
                 />
             }
 
@@ -113,20 +149,23 @@ function Admin() {
                         Список упражнений
                         <ul>
                             {
-                                listExercises.map(({id, name}) => {
-                                    return <li key={id}>
+                                exercises.map(({id, name, ...data}) => {
+                                    return <li key={id} id={id} onClick={(e) => { loadStatisticExercises(e, id) }}>
                                         {name}
                                         <div>
                                             <button 
                                                 className='btn-redact-exercises'
-                                                onClick={openModalWindow}
+                                                onClick={(e) => {
+                                                    setIdExercises(id);
+                                                    openModalWindow(e);
+                                                }}
                                                 data-type="redact"
                                             >   
                                                 Редактировать
                                             </button>
                                             <button 
                                                 className='btn-delete-exercises'
-                                                onClick={deleteExercises}
+                                                onClick={(e) => { deleteExercises(e, id) }}
                                             >
                                                 Удалить
                                             </button>
@@ -159,8 +198,8 @@ function Admin() {
                         Список пользователей
                         <ul>
                             {
-                                listExercises.map(({id, name}) => {
-                                    return <li key={id}>{name}</li>
+                                users.map(({id, username, role, ...data}) => {
+                                    if (role !== 1) return <li key={id} onClick={(e) => loadStatisticUser(e, id)}>{username}</li>
                                 })
                             }
                         </ul>

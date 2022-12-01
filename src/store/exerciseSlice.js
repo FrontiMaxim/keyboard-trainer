@@ -1,10 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-    id: 1,
-    text: 'Говори со мной, держи глаза открытыми - брат, не засыпай.',
-    allowedCountError: 3,
-    time: 29
+    id: '',
+    text: '',
+    acceptable_count_errors: 0,
+    time: ''
 };
 
 const exerciseSlice = createSlice({
@@ -12,10 +12,10 @@ const exerciseSlice = createSlice({
   initialState,
   reducers: {
     installExercise: (state, action) => {
-        const {id,  text, allowedCountError, time} = action.payload;
+        const {id,  text, acceptable_count_errors, time} = action.payload;
         state.id = id;
         state.text = text;
-        state.allowedCountError = allowedCountError;
+        state.acceptable_count_errors = acceptable_count_errors;
         state.time = time;
     }
   },

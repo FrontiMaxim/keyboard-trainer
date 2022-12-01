@@ -10,28 +10,30 @@ import axios from 'axios';
 const {minLengthNameText, maxLengthNameText} = restrictions;
 
 const letterForZone = {
-    1: 'Ёё!1ЙйФфЯя+=ЪъЭэ,.',
-    2: '"2№3ЦцЫыЧчУуВвСс_-ЖжЮюБбДдЗз',
-    3: ';4КкАаМм ЬьЛлЩщ(9)0',
-    4: '%5ЕеПпИиГгОоТтРрНн:6*8'
+    '1': 'Ёё!1ЙйФфЯя+=ЪъЭэ,.',
+    '2': '"2№3ЦцЫыЧчУуВвСс_-ЖжЮюБбДдЗз',
+    '3': ';4КкАаМм ЬьЛлЩщ(9)0',
+    '4': '%5ЕеПпИиГгОоТтРрНн:6*8'
 }
 
-function ConstructorTask({closeModalWindow, nameForm, nameBtn, id}) {
-
+function ConstructorTask({closeModalWindow, nameForm, nameBtn, id, loadExercise}) {
 
    const { register, handleSubmit, setValue} = useForm({
         defaultValues: {
             id: '',
-            nameExercise: '',
-            level: 1,
-            allowedCountError: 0,
+            name: '',
+            text: 1,
+            acceptable_count_errors: 0,
         },
     });
 
     const [infoLevel, setInfoLevel ] = useState({
-        maxCountError: 0,
-        maxLengthText: 0,
-        minLengthText: 0
+        id: 1,
+        maximum_count_errors: 0,
+        maximum_exercise_length: 0,
+        minimum_exercise_length: 0,
+        click_time: 0,
+        keyboard_area: [1, 2] 
     });
 
    const [methodAdding, setMethodAdding] = useState('manually');
@@ -39,57 +41,73 @@ function ConstructorTask({closeModalWindow, nameForm, nameBtn, id}) {
    const [lengthTextGeneration, setLengthTextGeneration] = useState(0);
    const [text, setText] = useState('');
 
+   const [level, setLevel] = useState('1');
+
    const [ characters, setCharacters ] = useState('');
 
     const onSubmit = (data) => {
        
-        // if(checkText(characterSet)) {      
-        //     data['text'] = text;
-        //     console.log(data);
-        // } else {
-        //     alert('Текст упражнения не прошёл проверку на соответствие! Перепроверьте его!');
-        // }
+        if(checkText(characters)) {      
+            data['text'] = text;
+            data['level'] = infoLevel;
+
+            if (nameForm === 'Редактирование упражнения') {
+                axios.post('/exercise/update', data)
+            } else {
+                axios.post('/exercise/create', data);
+            }
+
+        } else {
+            alert('Текст упражнения не прошёл проверку на соответствие! Перепроверьте его!');
+        }
 
         closeModalWindow();
     } 
 
 
-    // подгрузка упражнений
-    // useEffect(() => {
-    //     if (nameForm === 'Редактивание упражнения') {
-    //         axios.get('./', {
-    //             params: id
-    //         })
-    //         .then(data => {
-    //             setValue('id', data.id);
-    //             setValue('nameExercise', data.nameExercise);
-    //             setValue('level', data.level);
-    //             setValue(' allowedCountError', data.allowedCountError);
-    //         })
-    //         .catch(err => {
-    //             console.log(err);
-    //         });
-    //     }
-    // }, []);
+    //подгрузка упражнения
+    useEffect(() => {
+        if (nameForm === 'Редактирование упражнения') {
+            axios.get('/exercise/get', {
+                params: {idExercise: id}
+            })
+            .then(response => {
+                const data = response.data;
+                console.log(response)
+                setValue('id', data.id);
+                setValue('name', data.name);
+                setValue('acceptable_count_errors', data.acceptable_count_errors);
+                
+                //setLevel(data.level.id);
+                setText(data.text);
+            })
+            .catch(err => {
+                console.log(err);
+            });
+        }
+    }, []);
 
 
-    // // подгрузка ограничений уровня
-    // useEffect(() => {
-    //     axios.get('./', {
-    //         params: register.level
-    //     })
-    //     .then(data => {
-    //         setInfoLevel({
-    //             maxCountError: data.maxCountError,
-    //             maxLenghtText: data.maxLenghtText,
-    //             minLenghtText: data.minLenghtText,
-    //         });
+    // подгрузка ограничений уровня
+    useEffect(() => {
+        axios.get('/level/get', {
+            params: { numberLevel: level },
+        })
+        .then(response => {
+            const data = response.data;
+            setInfoLevel({
+                id: data.id,
+                click_time: data.click_time,
+                maximum_count_errors: data.maximum_count_errors,
+                maximum_exercise_length: data.maximum_exercise_length,
+                minimum_exercise_length: data.minimum_exercise_length,
+            });
 
-    //         characterSet = '';
-    //         data.zones.map(z => characterSet += letterForZone[z]);
-    //     })
-    //     .catch(err => console.log(err));
-    // }, [register.level]);
+            setCharacters('');
+            data.keyboard_area.split('').map(z => setCharacters(prev => prev += letterForZone[z]));
+        })
+        .catch(err => console.log(err));
+    }, [level]);
 
 
     // автоматическая генерация текста
@@ -137,14 +155,14 @@ function ConstructorTask({closeModalWindow, nameForm, nameBtn, id}) {
                         id="nameTask" 
                         minLength={minLengthNameText} 
                         maxLength={maxLengthNameText} 
-                        {...register("nameExercise")}
+                        {...register("name")}
                     />
                     <div className="prompt">Допустимая длина названия: {minLengthNameText}-{maxLengthNameText}</div>
                 </label>
 
                 <label htmlFor="levelTask">
                     <p>Выберите уровень сложности:</p>
-                    <select id="levelTask" {...register("level")}>
+                    <select id="levelTask" onChange={(e) => setLevel(e.target.value)} >
                         <option value="1">1</option>
                         <option value="2">2</option>
                         <option value="3">3</option>
@@ -158,6 +176,7 @@ function ConstructorTask({closeModalWindow, nameForm, nameBtn, id}) {
                         <option value="file">из файла</option>
                         <option value="generation">генерация системой</option>
                     </select>
+                    <div className="prompt">Допустимые символы: {characters}</div>
                 </label>
 
 
@@ -168,21 +187,22 @@ function ConstructorTask({closeModalWindow, nameForm, nameBtn, id}) {
                         <textarea 
                             id="addingText" 
                             onChange={e => setText(e.target.value)}
-                            minLength={infoLevel.minLengthText}
-                            maxLength={infoLevel.maxLengthText}
+                            minLength={infoLevel.minimum_exercise_length}
+                            maxLength={infoLevel.maximum_exercise_length}
+                            value={text}
                         />
-                        <div className="prompt">Допустимая длина текста: {infoLevel.minLengthText}-{infoLevel.maxLengthText}</div>
+                        <div className="prompt">Допустимая длина текста: {infoLevel.minimum_exercise_length}-{infoLevel.maximum_exercise_length}</div>
                     </label>
                 }
                 {
                     methodAdding === "file" && 
                     <label htmlFor="addingText">
                         <input type="file" id="addingText" onChange={readFile}/>
-                        <textarea readonly value={text} 
-                            minLength={infoLevel.minLengthText}
-                            maxLength={infoLevel.maxLengthText}
+                        <textarea  value={text} 
+                            minLength={infoLevel.minimum_exercise_length}
+                            maxLength={infoLevel.maximum_exercise_length}
                         />
-                        <div className="prompt">Допустимая длина текста: {infoLevel.minLengthText}-{infoLevel.maxLengthText}</div>
+                        <div className="prompt">Допустимая длина текста: {infoLevel.minimum_exercise_length}-{infoLevel.maximum_exercise_length}</div>
                     </label>
                     
                 }
@@ -194,17 +214,17 @@ function ConstructorTask({closeModalWindow, nameForm, nameBtn, id}) {
                             type="number" 
                             id="lengthText" 
                             onChange={e => setLengthTextGeneration(e.target.value)}
-                            minLength={infoLevel.minLengthText}
-                            maxLength={infoLevel.maxLengthText}
+                            min={infoLevel.minimum_exercise_length}
+                            max={infoLevel.maximum_exercise_length}
                         />
-                        <div className="prompt">Допустимая длина текста: {infoLevel.minLengthText}-{infoLevel.maxLengthText}</div>
+                        <div className="prompt">Допустимая длина текста: {infoLevel.minimum_exercise_length}-{infoLevel.maximum_exercise_length}</div>
                         
                         <button type="button" className="btn-generate" onClick={generateText}>Сгенерировать</button>
-                        <textarea readonly value={text}
-                            minLength={infoLevel.minLengthText}
-                            maxLength={infoLevel.maxLengthText}
+                        <textarea value={text}
+                            minLength={infoLevel.minimum_exercise_length}
+                            maxLength={infoLevel.maximum_exercise_length}
                         />
-                        <div className="prompt">Допустимая длина текста: {infoLevel.minLengthText}-{infoLevel.maxLengthText}</div>
+                        <div className="prompt">Допустимая длина текста: {infoLevel.minimum_exercise_length}-{infoLevel.maximum_exercise_length}</div>
                     </label>
                 }
 
@@ -214,11 +234,11 @@ function ConstructorTask({closeModalWindow, nameForm, nameBtn, id}) {
                     <input 
                         type="number"
                         id="countError" 
-                        minLength='0'
-                        maxLength={infoLevel.maxCountError}
-                        {...register("allowedCountError")}
+                        min='0'
+                        max={Math.round(infoLevel.maximum_count_errors / 100 * text.length)}
+                        {...register("acceptable_count_errors")}
                     />
-                    <div className="prompt">Допустимый диапозон: 0-{infoLevel.maxCountError}</div>
+                    <div className="prompt">Допустимый диапозон: 0-{Math.round(infoLevel.maximum_count_errors / 100 * text.length)}</div>
                 </label>
 
                 <div className='constructor_list-btn'>
