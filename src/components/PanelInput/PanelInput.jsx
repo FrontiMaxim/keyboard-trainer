@@ -38,47 +38,39 @@ function PanelInput() {
 
   // регистрация
   async function signup(data) {
-  
-    try {
-      let status = await axios.post('/signup', data);
-      status = await status.status;
-      if(status === 201) {
+
+    axios.post('/signup', data)
+    .then(() => {
         setIsRegistration(true);
         setMessage('Регистрация прошла успешно...');
         setIsError(false);
-      } else {
-        setIsError(true);
-        setMessage('Ошибка при регистрации...');
-      }
-    } catch(e) {
-        console.log(e);
-    }
+    })
+    .catch(() => {
+      setIsError(true);
+      setMessage('Ошибка при регистрации...');
+    })
   }
 
 
   // вход
   async function signin(data) {
-   
-    try {
-      let result = await (axios.post('/signin', data));
-      let status = await result.status;
+  
+    axios.post('/signin', data)
+    .then(response => {
+      let user = response.data;
+      dispatch(installUser(user));
 
-      if (status === 200) {
-        let user = await result.data;
-        dispatch(installUser(user));
-
-        if(user.role === 1) {
-          navigate('/admin');
-        } else if (user.role === 0) {
-          navigate('/user');
-        } 
-      }  else {
-        setIsError(true);
-        setMessage('Такого пользователя не существует...');
-      }
-    } catch(e) {
-        console.log(e);
-    }
+      if(user.role === 1) {
+        navigate('/admin');
+      } else if (user.role === 0) {
+        navigate('/user');
+      } 
+    })
+    .catch(error => {
+      console.log(error);
+      setIsError(true);
+      setMessage('Такого пользователя не существует...');
+    });
 }
 
 
