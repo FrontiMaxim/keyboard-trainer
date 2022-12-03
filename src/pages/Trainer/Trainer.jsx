@@ -114,7 +114,7 @@ function Trainer() {
 
 
   useEffect(() => {
-    if (countError === exercise.allowedCountError) {
+    if (countError > exercise.acceptable_count_errors) {
       completeExercises('unsuccessfully', 'Превышен лимит ошибок! Упражнение не выполнено! Вас автоматически перебросит на Важу страницу...');
     }
   }, [countError]);
