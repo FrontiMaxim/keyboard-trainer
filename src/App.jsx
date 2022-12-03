@@ -6,9 +6,8 @@ import Trainer from "./pages/Trainer/Trainer";
 import User from "./pages/User/User";
 
 
-
-
 function App() {
+
   return (
     <div className="App">
       <BrowserRouter>
