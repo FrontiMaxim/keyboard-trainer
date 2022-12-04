@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Input from '../Input/Input';
@@ -37,7 +37,7 @@ function FormConstructorLevel({closeModalWindow}) {
         {text: '4', value: 4}
     ];
 
-    const [level, setLevel] = useState(0);
+    const [level, setLevel] = useState(1);
 
     const {
         register,
@@ -59,19 +59,20 @@ function FormConstructorLevel({closeModalWindow}) {
     const watchMinLenghtText = watch('minimum_exercise_length', 10);
     const watchLevel = watch('id', 1);
 
+    /* проблема изменения watchLevel: изменеятся, даже если его не затарагиваешь, поэтому введено
+    сравнение с предыдущим значением, чтобы предотвратить повторный запрос */
+    // в начале watchLevel == 1
+    const prevLevel = useRef(0);
     useEffect(() => {
-        if(level != parseInt(watchLevel)) {
+        if(prevLevel.current !== parseInt(watchLevel)) {
             loadLevel();
-            setLevel(watchLevel);
+            prevLevel.current = parseInt(watchLevel);
         }
-
     }, [watchLevel]);
 
     
     const loadLevel = async () => {
-        const {data, status, error} = await query('/level/get', 'get', {numberLevel: watchLevel}, null);
-
-        console.log(data)
+        const {data} = await query('/level/get', 'get', {numberLevel: watchLevel}, null);
 
         setValue('id', data.id);
         setValue('maximum_count_errors', data.maximum_count_errors);
@@ -130,12 +131,12 @@ function FormConstructorLevel({closeModalWindow}) {
                 textHelp='Допустимый диапазон'
                 nameField='minimum_exercise_length' 
                 max={
-                    watchLevel === 1 ? maxLenghtTextOneLevel :
-                    watchLevel === 2 ? maxLenghtTextTwoLevel : maxLenghtTextThreeLevel
+                    parseInt(watchLevel) === 1 ? maxLenghtTextOneLevel :
+                    parseInt(watchLevel) === 2 ? maxLenghtTextTwoLevel : maxLenghtTextThreeLevel
                 } 
                 min={
-                    watchLevel === 1 ? minLenghtTextOneLevel :
-                    watchLevel === 2 ? maxLenghtTextOneLevel : maxLenghtTextTwoLevel
+                    parseInt(watchLevel) === 1 ? minLenghtTextOneLevel :
+                    parseInt(watchLevel) === 2 ? maxLenghtTextOneLevel : maxLenghtTextTwoLevel
                 } 
                 errors={errors}
                 step={1}
@@ -150,8 +151,8 @@ function FormConstructorLevel({closeModalWindow}) {
                 textHelp='Допустимый диапазон'
                 nameField='maximum_exercise_length' 
                 max={
-                    watchLevel === 1 ? maxLenghtTextOneLevel :
-                    watchLevel === 2 ? maxLenghtTextTwoLevel : maxLenghtTextThreeLevel
+                    parseInt(watchLevel) === 1 ? maxLenghtTextOneLevel :
+                    parseInt(watchLevel) === 2 ? maxLenghtTextTwoLevel : maxLenghtTextThreeLevel
                 } 
                 min={watchMinLenghtText} 
                 errors={errors}
@@ -167,8 +168,8 @@ function FormConstructorLevel({closeModalWindow}) {
                 textHelp='Допустимый диапазон'
                 nameField='maximum_count_errors' 
                 max={
-                    watchLevel === 1 ? maxCountErrorOneLevel:
-                    watchLevel === 2 ? maxCountErrorTwoLevel : maxCountErrorThreeLevel
+                    parseInt(watchLevel) === 1 ? maxCountErrorOneLevel:
+                    parseInt(watchLevel) === 2 ? maxCountErrorTwoLevel : maxCountErrorThreeLevel
                 } 
                 min={0} 
                 errors={errors}
