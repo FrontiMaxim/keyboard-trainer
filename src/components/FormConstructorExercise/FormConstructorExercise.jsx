@@ -13,10 +13,10 @@ function FormConstructorExercise({closeModalWindow, nameForm, nameBtn, id, loadE
 
 
     const letterForZone = {
-        '1': 'Ёё!1ЙйФфЯя+=ЪъЭэ,.',
-        '2': '"2№3ЦцЫыЧчУуВвСс_-ЖжЮюБбДдЗз',
-        '3': ';4КкАаМм ЬьЛлЩщ(9)0',
-        '4': '%5ЕеПпИиГгОоТтРрНн:6*8'
+        '1': ';4КкАаМм%5ЕеПпИи:6НнРрТт',
+        '2': '#3УуВвСс ?7ГгОоЬь',
+        '3': '"2ЦцЫыЧч*8ШшЛлБб(9ЩщДдЮю',
+        '4': 'Ёё!1ЙйФфЯя)0ЗзЖж,._-ХхЭэ+=Ъъ/'
     }
 
     const  {
@@ -86,10 +86,11 @@ function FormConstructorExercise({closeModalWindow, nameForm, nameBtn, id, loadE
         const { data } = await query('/level/get', 'get', { numberLevel: watchLevel }, null);
 
         setLevelRestrictions({
+            id: data.id,
             maximum_count_errors: data.maximum_count_errors,
             maximum_exercise_length: data.maximum_exercise_length,
             minimum_exercise_length: data.minimum_exercise_length,
-            keyboard_area: data.keyboard_area.split('')
+            keyboard_area: data.keyboard_area
         });
 
         let newAlphabet = '';
@@ -120,54 +121,32 @@ function FormConstructorExercise({closeModalWindow, nameForm, nameBtn, id, loadE
 
     // автоматическая генерация текста
     function generateText() {
-        let text = '';
-        for(let i = 0; i < parseInt(watchLengthTextGeneration); i++) {
-            text += alphabet[Math.floor(Math.random() * alphabet.length)];
-        }
-        setValue('text', text);
-    }
-
-
-    function readFile(e) {
-        const file = e.target.files[0];
-     
-        const reader = new FileReader();
-
-        reader.onload = (e) => {
-            const text = JSON.parse(e.target.result).text;
+        if(!errors['length_text_generation']) {
+            let text = '';
+            for(let i = 0; i < parseInt(watchLengthTextGeneration); i++) {
+                text += alphabet[Math.floor(Math.random() * alphabet.length)];
+            }
             setValue('text', text);
         }
-        
-        reader.readAsText(file);
     }
 
     const query = useSendData();
 
-    const loadLevel = async () => {
-        const {data} = await query('/level/get', 'get', {numberLevel: watchLevel}, null);
+    const sendData = (data) => {
 
-        setValue('id', data.id);
-        setValue('maximum_count_errors', data.maximum_count_errors);
-        setValue('maximum_exercise_length', data.maximum_exercise_length);
-        setValue('minimum_exercise_length', data.minimum_exercise_length);
-        setValue('click_time', data.click_time);
-        setValue('keyboard_area', data.keyboard_area.split(''));
-    };
-
-    const sendData = async (data) => {
-
-        delete data['method_input'];
-        delete data['length_text_generation'];
+        delete data.method_input;
+        delete data.length_text_generation;
+        data.level = levelRestrictions;
       
         console.log(data);
 
         if (nameForm === 'Редактирование упражнения') {
-            query('/exercise/update', data);
+            query('/exercise/update', 'post', null, data);
         } else {
-            query('/exercise/create', data);
+            query('/exercise/create', 'post', null, data);
         }
 
-        await loadExercise();
+        loadExercise();
         closeModalWindow();
     }
     
@@ -202,7 +181,7 @@ function FormConstructorExercise({closeModalWindow, nameForm, nameBtn, id, loadE
 
             {
                 watchMethodInput === 'file' && 
-                <InputFile readFile={readFile} accept={['.json']} />
+                <InputFile setValue={setValue} accept={['.json']} />
             }
             {
                 watchMethodInput === 'generation' && 
@@ -219,7 +198,7 @@ function FormConstructorExercise({closeModalWindow, nameForm, nameBtn, id, loadE
                         step={1}
                     />
 
-                    <button onClick={generateText}>Сгенерировать</button>
+                    <button className={styles.btn} type="button" onClick={generateText}>Сгенерировать</button>
                 </>
                 
             }
@@ -232,6 +211,7 @@ function FormConstructorExercise({closeModalWindow, nameForm, nameBtn, id, loadE
                 errors={errors}
                 textHelp='Допустимое количество символов'
                 alphabet={alphabet}
+                textLabel='Текст'
             />
   
             <Input 
@@ -247,7 +227,7 @@ function FormConstructorExercise({closeModalWindow, nameForm, nameBtn, id, loadE
             />
 
             <div className={styles.list_btn}>
-                <button type="submit" className={styles.btn}>Применить</button>
+                <button type="submit" className={styles.btn}>{nameBtn}</button>
                 <button type="button" className={styles.btn} onClick={closeModalWindow}>Отмена</button>
             </div>
         </form>

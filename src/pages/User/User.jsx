@@ -18,6 +18,7 @@ import { useEffect } from 'react';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import {installExercise} from '../../store/exerciseSlice';
+import ModalWindow from '../../components/ModalWindow/ModalWindow';
 
 ChartJS.register(
     CategoryScale,
@@ -145,7 +146,7 @@ function User() {
             });
 
             setdataCountTrain({
-                labels: arrayDate.sort(),
+                labels: arrayDate,
                 datasets: [
                     {
                     data: arrayParam,
@@ -241,7 +242,9 @@ function User() {
         
         {
             isOpenModalWindow && 
-            <Information closeModalWindow={closeModalWindow} />
+            <ModalWindow>
+                <Information closeModalWindow={closeModalWindow} />
+            </ModalWindow>
         }
     
         <div className='User_head'>

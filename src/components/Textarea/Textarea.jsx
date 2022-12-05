@@ -1,5 +1,5 @@
 import React from 'react'
-import { useState } from 'react';
+import styles from './Textarea.module.css';
 
 function Textarea({ 
     nameField, 
@@ -9,11 +9,10 @@ function Textarea({
     errors, 
     textHelp, 
     alphabet,
+    textLabel
     }) {
 
-
-    const [forbiddenCharacters, setForbiddenCharacters] = useState([]);
-
+    // поиск запрещённых символов
     const chooseWrongLetters = (text) => {
         const array = [];
         for(let character of text) {
@@ -23,14 +22,19 @@ function Textarea({
                 }
             } 
         }
-        console.log(array)
-        setForbiddenCharacters(array);
+
+        const result = {
+            isMatch: array.length === 0,
+            array
+        }
+        return result;
     }
 
     return (
         <label>
-            <div>{`${textHelp}: ${minLength} - ${maxLength}`}</div>
-            <div>{`Допустимые символы: ${alphabet}`}</div>
+            <p className={styles.p}>{textLabel + ':'}</p>
+            <div className={styles.prompt}>{`${textHelp}: ${minLength} - ${maxLength}`}</div>
+            <div className={styles.prompt}>{`Допустимые символы: ${alphabet}`}</div>
             <textarea   
                 minLength={minLength}
                 maxLength={maxLength}
@@ -45,16 +49,16 @@ function Textarea({
                             value: minLength,
                             message: `Количество символов недостаточно`
                         },
-                        pattern: {
-                            value: new RegExp(`[${alphabet}]*`),
-                            message: `Найдены запрещённые символы: ${forbiddenCharacters}`
-                        },
-                        onChange: (e) => chooseWrongLetters(e.target.value)
+                        validate: (value) => {
+                            const {isMatch, array} = chooseWrongLetters(value);
+            
+                            return !isMatch ? `Найдены запрещённые символы: ${array}` : true;
+                        }
                     })
                 }
             />
             {
-                errors[nameField] && <div>{errors[nameField].message}</div>
+                errors[nameField] && <div className={styles.error}>{errors[nameField].message}</div>
             }
         </label>
     )

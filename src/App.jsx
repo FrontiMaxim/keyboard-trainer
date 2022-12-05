@@ -9,23 +9,16 @@ import User from "./pages/User/User";
 
 function App() {
 
-  const [isOpenModalWindow, setIsOpenModalWindow] = useState(false);
-
-  function closeModalWindow(event) {
-    setIsOpenModalWindow(false);
-}
-
   return (
     <div className="App">
-      <FormConstructorExercise closeModalWindow={closeModalWindow} nameForm='Создать' nameBtn='Сохранить'/>
-      {/* <BrowserRouter>
+      <BrowserRouter>
         <Routes>
           <Route path="/" element={ <PanelInput />} />
           <Route path="/user" element={<User />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/trainer" element={ <Trainer />} />
         </Routes>
-      </BrowserRouter> */}
+      </BrowserRouter>
     </div>
   );
 }

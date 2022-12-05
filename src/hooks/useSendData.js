@@ -3,7 +3,7 @@ import axios from "axios"
 export const useSendData = () => {
 
     let data = {};
-    let status = 0;
+    let status = 400;
     let error = null;
 
     return async (url, method, params, body) => {
@@ -18,7 +18,6 @@ export const useSendData = () => {
             status = response.status;
         })
         .catch((err) => {
-            status = response.status;
             error = err;
         });
 

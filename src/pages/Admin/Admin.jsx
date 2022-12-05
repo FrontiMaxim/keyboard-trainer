@@ -1,9 +1,9 @@
 import React from 'react'
 import { useState } from 'react';
 import Information from '../../components/ModalWindow/Information/Information';
-import ConstructorTask from '../../components/ModalWindow/ConstructorTask/ConstructorTask';
 import ModalWindow from '../../components/ModalWindow/ModalWindow';
 import FormConstructorLevel from '../../components/FormConstructorLevel/FormConstructorLevel';
+import FormConstructorExercise from '../../components/FormConstructorExercise/FormConstructorExercise';
 import './Admin.css';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
@@ -125,7 +125,7 @@ function Admin() {
      
                      {
                          (typeModalWindow === 'redact' || typeModalWindow === 'create') &&
-                         <ConstructorTask 
+                         <FormConstructorExercise 
                              closeModalWindow={closeModalWindow} 
                              nameForm={typeModalWindow === 'redact' ? 'Редактирование упражнения' : 'Создание упражнения'} 
                              nameBtn={typeModalWindow === 'redact' ? 'Сохранить' : 'Создать'}

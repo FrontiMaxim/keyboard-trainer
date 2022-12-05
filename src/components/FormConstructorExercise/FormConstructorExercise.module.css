@@ -15,6 +15,7 @@
 }
 
 .btn {
+    display: block;
     width: 45%;
     cursor: pointer;
     outline: none;
