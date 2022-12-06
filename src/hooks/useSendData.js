@@ -3,12 +3,12 @@ import axios from "axios"
 export const useSendData = () => {
 
     let data = {};
-    let status = 400;
+    let status = 0;
     let error = null;
 
     return async (url, method, params, body) => {
 
-        const response = await axios(url, {
+        await axios(url, {
             method: method,
             data: body,
             params: params
@@ -19,6 +19,7 @@ export const useSendData = () => {
         })
         .catch((err) => {
             error = err;
+            status = err.response.status;
         });
 
         return {data, status, error};

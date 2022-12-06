@@ -251,9 +251,14 @@ function User() {
             <div className='User_head_login'>
                 {username}
             </div>
-            <button className='User_head_btn-info' onClick={openModalWindow}>
-                Справочная информация
-            </button>
+            <div>
+                <button className='User_head_btn-info' onClick={openModalWindow}>
+                    Справочная информация
+                </button>
+                <button  onClick={() => {navigate('/')}}>
+                    Выход
+                </button>
+            </div>
         </div>
         <div className='User_main'>
             <div className='User_main_exercises'>

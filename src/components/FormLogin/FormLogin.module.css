@@ -1,0 +1,32 @@
+.form_login {
+    background-color: white;
+    padding: 10px;
+    width: 22vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 20vh auto 0 auto;
+    box-shadow: 0 0 5px #000;
+}
+
+.h3 {
+    text-align: center;
+}
+
+.list_btn {
+    display: flex;
+    width: 80%;
+    justify-content: space-around;
+    margin: 30px 0 20px 0;
+}
+
+.btn {
+    display: inline-block;
+    cursor: pointer;
+    outline: none;
+}
+
+.btn:last-child {
+    width: 80px;
+}

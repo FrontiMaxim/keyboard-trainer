@@ -9,7 +9,7 @@ import styles from './FormConstructorExercise.module.css';
 import InputFile from '../InputFile/InputFile';
 import Textarea from '../Textarea/Textarea';
 
-function FormConstructorExercise({closeModalWindow, nameForm, nameBtn, id, loadExercise}) {
+function FormConstructorExercise({closeModalWindow, nameForm, nameBtn, id}) {
 
 
     const letterForZone = {
@@ -146,7 +146,6 @@ function FormConstructorExercise({closeModalWindow, nameForm, nameBtn, id, loadE
             query('/exercise/create', 'post', null, data);
         }
 
-        loadExercise();
         closeModalWindow();
     }
     

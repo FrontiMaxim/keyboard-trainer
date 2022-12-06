@@ -114,7 +114,7 @@ function Trainer() {
 
 
   useEffect(() => {
-    if (countError === exercise.allowedCountError) {
+    if (countError === exercise.acceptable_count_errors + 1) {
       completeExercises('unsuccessfully', 'Превышен лимит ошибок! Упражнение не выполнено! Вас автоматически перебросит на Важу страницу...');
     }
   }, [countError]);
@@ -123,19 +123,20 @@ function Trainer() {
 
     setIsPlay(false);
     setAttempts(0);
-    setTimeEnd(new Date().getTime());
-
+    
     setShowAlert(false);
 
     switch(status) {
       case 'successfully':
         setKindAlert('normal');
+        setTimeEnd(new Date().getTime());
         break;
       case 'unsuccessfully':
         setKindAlert('error');
-        break
-
+        setTimeEnd(new Date().getTime());
+        break;
       default:
+        setKindAlert('error');
     }
 
     setMessageAlert(text);
@@ -187,7 +188,7 @@ function Trainer() {
     
         } else if (!specialSymbols.includes(event.key)) {
           
-          setCountError(countError + 1);
+          setCountError(prev => prev + 1);
     
           letter.classList.add('error');
         }
@@ -200,10 +201,10 @@ function Trainer() {
     ref.current.focus();
   }
 
-  // выход 
+  // преждевременный выход 
   function goOut() {
     if(currentLetter !== (exercise.text.length)) {
-      completeExercises('unsuccessfully', 'Вы ещё не закончили упражнение! Данные не сохранятся! Вас автоматически перебросит на Важу страницу...');
+      completeExercises('', 'Вы ещё не закончили упражнение! Данные не сохранятся! Вас автоматически перебросит на Важу страницу...');
     }
   }
 

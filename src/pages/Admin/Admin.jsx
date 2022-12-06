@@ -8,6 +8,7 @@ import './Admin.css';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function Admin() {
 
@@ -18,6 +19,8 @@ function Admin() {
 
     const [exercises, setExercises] = useState([]);
     const [idExercise, setIdExercises] = useState(0);
+
+    const navigate = useNavigate();
 
 
     const [users, setUsers] = useState([]);
@@ -88,7 +91,7 @@ function Admin() {
     useEffect(() => {
         loadUsers();
         loadExercise();
-    }, []);
+    });
 
 
     async function loadStatisticExercises(e, id) {
@@ -151,9 +154,14 @@ function Admin() {
                          Создать упражнение
                     </button>
                 </div>
-                <button className='admin_head_btn-info' onClick={openModalWindow} data-type="info"> 
-                    Справочная информация
-                </button>
+                <div>
+                    <button className='admin_head_btn-info' onClick={openModalWindow} data-type="info"> 
+                        Справочная информация
+                    </button>
+                    <button  onClick={() => {navigate('/')}}> 
+                        Выйти
+                    </button>
+                </div>
             </div>
            
             <div className='admin_main'>

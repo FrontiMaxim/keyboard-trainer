@@ -85,3 +85,7 @@ select {
     cursor: pointer;
     background-color: orangered;
 }
+
+.User_head_btn-info {
+    margin-right: 10px;
+}
