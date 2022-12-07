@@ -21,8 +21,8 @@ function FormLogin() {
         },
         handleSubmit, 
     } = useForm({
-        mode: 'onBlur',
-        reValidateMode: 'onChange'
+        mode: 'onSubmit',
+        reValidateMode: 'onSubmit',
     });
   
     const navigate = useNavigate();

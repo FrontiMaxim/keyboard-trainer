@@ -19,6 +19,7 @@ import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import {installExercise} from '../../store/exerciseSlice';
 import ModalWindow from '../../components/ModalWindow/ModalWindow';
+import Guide from '../../components/ModalWindow/Guide/Guide';
 
 ChartJS.register(
     CategoryScale,
@@ -42,6 +43,7 @@ function User() {
 
     const [exercises, setExercises] = useState([]);
     const [statisticUser, setStatisticUser] = useState({});
+    const [typeInformation, setTypeInformation] = useState('Справочная информация');
 
     const [level, setLevel] = useState('1');
 
@@ -106,7 +108,7 @@ function User() {
             });
 
             setDataError({
-                labels: arrayDate.sort(),
+                labels: arrayDate,
                 datasets: [
                     {
                     data: arrayParam ,
@@ -127,7 +129,7 @@ function User() {
             });
 
             setDataSpeed({
-                labels: arrayDate.sort(),
+                labels: arrayDate,
                 datasets: [
                     {
                     data: arrayParam,
@@ -243,7 +245,12 @@ function User() {
         {
             isOpenModalWindow && 
             <ModalWindow>
-                <Information closeModalWindow={closeModalWindow} />
+                {
+                    typeInformation === 'Справочная информация' ?
+                    <Information closeModalWindow={closeModalWindow} /> :
+                    <Guide closeModalWindow={closeModalWindow} /> 
+                }
+                
             </ModalWindow>
         }
     
@@ -252,7 +259,16 @@ function User() {
                 {username}
             </div>
             <div>
-                <button className='User_head_btn-info' onClick={openModalWindow}>
+                <button className='User_head_btn-info' onClick={() => {
+                    setTypeInformation('Руководство пользователя');
+                    openModalWindow();
+                }}>
+                    Руководство пользователя
+                </button>
+                <button className='User_head_btn-info' onClick={() => {
+                    setTypeInformation('Справочная информация');
+                    openModalWindow();
+                }}>
                     Справочная информация
                 </button>
                 <button  onClick={() => {navigate('/')}}>

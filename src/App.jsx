@@ -2,7 +2,6 @@ import React, {useState} from "react";
 import {BrowserRouter, Routes, Route} from "react-router-dom";
 import FormConstructorExercise from "./components/FormConstructorExercise/FormConstructorExercise";
 import FormLogin from "./components/FormLogin/FormLogin";
-import PanelInput from "./components/PanelInput/PanelInput";
 import Admin from "./pages/Admin/Admin";
 import Trainer from "./pages/Trainer/Trainer";
 import User from "./pages/User/User";

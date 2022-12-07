@@ -9,6 +9,7 @@ import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import Guide from '../../components/ModalWindow/Guide/Guide';
 
 function Admin() {
 
@@ -52,6 +53,9 @@ function Admin() {
             case 'change':
                 setTypeModalWindow('change');
                 break
+            case 'guide':
+                setTypeModalWindow('guide');
+                break
             default:
         }
         setIsOpenModalWindow(true);
@@ -89,9 +93,12 @@ function Admin() {
 
     // загрузка упражнений и пользователей
     useEffect(() => {
-        loadUsers();
-        loadExercise();
-    });
+
+        if (isOpenModalWindow === false) {
+            loadUsers();
+            loadExercise();
+        }
+    }, [isOpenModalWindow]);
 
 
     async function loadStatisticExercises(e, id) {
@@ -125,6 +132,11 @@ function Admin() {
                          typeModalWindow === 'info' &&
                          <Information closeModalWindow={closeModalWindow} />
                      }
+
+                     {
+                         typeModalWindow === 'guide' &&
+                         <Guide closeModalWindow={closeModalWindow} />
+                     }
      
                      {
                          (typeModalWindow === 'redact' || typeModalWindow === 'create') &&
@@ -155,6 +167,9 @@ function Admin() {
                     </button>
                 </div>
                 <div>
+                    <button className='admin_head_btn-info' onClick={openModalWindow} data-type="guide"> 
+                        Руководство пользователя
+                    </button>
                     <button className='admin_head_btn-info' onClick={openModalWindow} data-type="info"> 
                         Справочная информация
                     </button>

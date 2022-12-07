@@ -49,8 +49,8 @@ function FormConstructorLevel({closeModalWindow}) {
         setValue,
         getValues
     } = useForm({
-        mode: 'onBlur',
-        reValidateMode: 'onBlur',
+        mode: 'onSubmit',
+        reValidateMode: 'onSubmit',
     });
 
     const query = useSendData();
@@ -171,7 +171,7 @@ function FormConstructorLevel({closeModalWindow}) {
                     parseInt(watchLevel) === 1 ? maxCountErrorOneLevel:
                     parseInt(watchLevel) === 2 ? maxCountErrorTwoLevel : maxCountErrorThreeLevel
                 } 
-                min={0} 
+                min={'0'} 
                 errors={errors}
                 step={1}
                 getValues={getValues}

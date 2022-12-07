@@ -47,8 +47,8 @@ function FormConstructorExercise({closeModalWindow, nameForm, nameBtn, id}) {
         setValue,
         getValues
     } = useForm({
-        mode: 'onBlur',
-        reValidateMode: 'onBlur',
+        mode: 'onSubmit',
+        reValidateMode: 'onSubmit',
         defaultValues: {
             name: '',
             level: 1,
@@ -220,7 +220,7 @@ function FormConstructorExercise({closeModalWindow, nameForm, nameBtn, id}) {
                 textHelp='Допустимый диапазон'
                 nameField='acceptable_count_errors' 
                 max={Math.round(levelRestrictions.maximum_count_errors / 100 * watchText.length)} 
-                min={0} 
+                min={'0'} 
                 errors={errors}
                 step={1}
             />

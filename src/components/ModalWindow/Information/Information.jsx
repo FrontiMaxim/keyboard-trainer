@@ -1,6 +1,5 @@
 import React from 'react';
 import './Information.css';
-//import '../ModalWindow.css';
 
 function Information({closeModalWindow}) {
   return (
