@@ -5,6 +5,7 @@ import FormLogin from "./components/FormLogin/FormLogin";
 import Admin from "./pages/Admin/Admin";
 import Trainer from "./pages/Trainer/Trainer";
 import User from "./pages/User/User";
+import Guide from './components/ModalWindow/Guide/Guide.jsx';
 
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
           <Route path="/user" element={<User />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/trainer" element={ <Trainer />} />
+          <Route path="/guide" element={ <Guide />} />
         </Routes>
       </BrowserRouter>
     </div>

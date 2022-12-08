@@ -89,3 +89,8 @@ select {
 .User_head_btn-info {
     margin-right: 10px;
 }
+
+.link {
+    text-decoration: none;
+    color: #000;
+}

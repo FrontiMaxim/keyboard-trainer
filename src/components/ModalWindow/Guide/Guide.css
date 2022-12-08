@@ -1,32 +1,27 @@
-.information ul {
-    list-style: none;
+.guide {
+    padding: 20px 70px;
+    font-family: 'Times New Roman';
+    overflow: hidden;
 }
 
-.information {
-    background-color: white;
-    padding: 10px;
-    border-radius: 20px;
+.guide h1, .guide h2 {
+    color: green;
 }
 
-.information h2 {
-    text-align: center;
-}
-
-.btn-close-modalWindow {
+.guide img {
     display: block;
     margin: 0 auto;
-    width: 150px;
-    height: 30px;
+    transform: scale(0.8);
 }
 
-.btn-close-modalWindow:hover {
-    cursor: pointer;
-    background-color: orangered;
+.guide p {
+    margin: 0;
 }
 
-.guide {
-    height: 50vh;
-    overflow-y: scroll;
-    display: flex;
-    flex-direction: column;
+.guide_2, .guide_6, .guide_7, .guide_8, .guide_9, .guide_10, .guide_11 {
+    width: 90%;
 }
+
+
+
+

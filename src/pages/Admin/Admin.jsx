@@ -8,8 +8,7 @@ import './Admin.css';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import Guide from '../../components/ModalWindow/Guide/Guide';
+import { Link, useNavigate } from 'react-router-dom';
 
 function Admin() {
 
@@ -52,9 +51,6 @@ function Admin() {
                 break
             case 'change':
                 setTypeModalWindow('change');
-                break
-            case 'guide':
-                setTypeModalWindow('guide');
                 break
             default:
         }
@@ -132,12 +128,6 @@ function Admin() {
                          typeModalWindow === 'info' &&
                          <Information closeModalWindow={closeModalWindow} />
                      }
-
-                     {
-                         typeModalWindow === 'guide' &&
-                         <Guide closeModalWindow={closeModalWindow} />
-                     }
-     
                      {
                          (typeModalWindow === 'redact' || typeModalWindow === 'create') &&
                          <FormConstructorExercise 
@@ -167,8 +157,13 @@ function Admin() {
                     </button>
                 </div>
                 <div>
-                    <button className='admin_head_btn-info' onClick={openModalWindow} data-type="guide"> 
-                        Руководство пользователя
+                    <button  className='User_head_btn-info'>
+                        <Link className='link'
+                            target="_blank"
+                            to="/guide"
+                        >
+                            Руководство пользователя
+                        </Link>
                     </button>
                     <button className='admin_head_btn-info' onClick={openModalWindow} data-type="info"> 
                         Справочная информация

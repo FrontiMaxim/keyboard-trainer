@@ -12,14 +12,13 @@ import {
   } from 'chart.js';
 import { useState } from 'react';
 import Information from '../../components/ModalWindow/Information/Information';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import {installExercise} from '../../store/exerciseSlice';
 import ModalWindow from '../../components/ModalWindow/ModalWindow';
-import Guide from '../../components/ModalWindow/Guide/Guide';
 
 ChartJS.register(
     CategoryScale,
@@ -43,7 +42,6 @@ function User() {
 
     const [exercises, setExercises] = useState([]);
     const [statisticUser, setStatisticUser] = useState({});
-    const [typeInformation, setTypeInformation] = useState('Справочная информация');
 
     const [level, setLevel] = useState('1');
 
@@ -246,11 +244,8 @@ function User() {
             isOpenModalWindow && 
             <ModalWindow>
                 {
-                    typeInformation === 'Справочная информация' ?
-                    <Information closeModalWindow={closeModalWindow} /> :
-                    <Guide closeModalWindow={closeModalWindow} /> 
-                }
-                
+                    <Information closeModalWindow={closeModalWindow} /> 
+                }       
             </ModalWindow>
         }
     
@@ -259,16 +254,15 @@ function User() {
                 {username}
             </div>
             <div>
-                <button className='User_head_btn-info' onClick={() => {
-                    setTypeInformation('Руководство пользователя');
-                    openModalWindow();
-                }}>
-                    Руководство пользователя
+                <button  className='User_head_btn-info'>
+                    <Link className='link'
+                        target="_blank"
+                        to="/guide"
+                    >
+                        Руководство пользователя
+                    </Link>
                 </button>
-                <button className='User_head_btn-info' onClick={() => {
-                    setTypeInformation('Справочная информация');
-                    openModalWindow();
-                }}>
+                <button className='User_head_btn-info' onClick={openModalWindow}>
                     Справочная информация
                 </button>
                 <button  onClick={() => {navigate('/')}}>
