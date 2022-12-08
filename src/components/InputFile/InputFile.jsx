@@ -12,14 +12,19 @@ function InputFile({accept, setValue}) {
       const reader = new FileReader();
 
       reader.onload = (e) => {
+
+        try {
           const json = JSON.parse(e.target.result);
+          
           if(json.hasOwnProperty('text')) {
             setValue('text', json.text);
             setIsMatchStructure(true);
           } else {
             setIsMatchStructure(false);
           }
-          
+        } catch(e) {
+          setIsMatchStructure(false);
+        }   
       }
       
       reader.readAsText(file);
